@@ -1,124 +1,135 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <title>TigerNW</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #0f172a;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+<meta charset="UTF-8">
+<title>TigerNw</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #121212;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
 
-        header {
-            text-align: center;
-            padding: 20px;
-            font-size: 32px;
-            font-weight: bold;
-            background: #020617;
-        }
+    .container {
+        background: #1e1e1e;
+        padding: 25px;
+        border-radius: 10px;
+        width: 300px;
+        text-align: center;
+    }
 
-        main {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    input, button {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 5px;
+    }
 
-        .box {
-            background: #020617;
-            padding: 30px;
-            border-radius: 10px;
-            width: 300px;
-            text-align: center;
-        }
+    input {
+        background: #2b2b2b;
+        color: white;
+    }
 
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border: none;
-            border-radius: 5px;
-        }
+    button {
+        background: #ff9800;
+        color: black;
+        cursor: pointer;
+        font-weight: bold;
+    }
 
-        button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+    button:hover {
+        background: #ffa726;
+    }
 
-        button:hover {
-            background: #1d4ed8;
-        }
+    .hidden {
+        display: none;
+    }
 
-        .top-bar {
-            display: none;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background: #020617;
-            font-size: 14px;
-        }
+    .discord {
+        margin-top: 15px;
+        padding: 10px;
+        background: #5865F2;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 
-        footer {
-            text-align: center;
-            padding: 10px;
-            background: #020617;
-            font-size: 14px;
-        }
-    </style>
+    .message {
+        margin-top: 10px;
+        color: #ff9800;
+    }
+</style>
 </head>
 <body>
 
-<header>TigerNW</header>
-
-<div class="top-bar" id="topBar">
-    <div>IP: 127.0.0.1</div>
-    <button onclick="logout()">Çıkış Yap</button>
+<div class="container" id="mainMenu">
+    <h2>Hoş Geldin</h2>
+    <button onclick="showLogin()">Giriş Yap</button>
+    <button onclick="showRegister()">Kayıt Ol</button>
 </div>
 
-<main>
-    <div class="box" id="loginBox">
-        <h3>Giriş Yap / Hesap Oluştur</h3>
-        <input type="text" id="username" placeholder="Oyun İsmi">
-        <input type="password" id="password" placeholder="Şifre">
-        <button onclick="login()">Giriş Yap</button>
-    </div>
-</main>
+<div class="container hidden" id="login">
+    <h2>Giriş Yap</h2>
+    <input type="text" placeholder="Oyuncu İsmi">
+    <input type="password" placeholder="Şifre">
+    <button onclick="enterSite()">Giriş Yap</button>
+</div>
 
-<footer>TigerNetwork</footer>
+<div class="container hidden" id="register">
+    <h2>Kayıt Ol</h2>
+    <input type="text" placeholder="Oyuncu İsmi">
+    <input type="password" placeholder="Şifre">
+    <input type="number" placeholder="Yaş">
+    <button onclick="enterSite()">Kayıt Ol</button>
+</div>
+
+<div class="container hidden" id="site">
+    <h1>TigerNw</h1>
+    <button onclick="copyIP()">IP Kopyala</button>
+
+    <div class="discord" onclick="showSoon()">Discord</div>
+    <div class="message" id="soonText"></div>
+</div>
 
 <script>
-    function login() {
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-
-        if (username === "" || password === "") {
-            alert("Lütfen oyun ismi ve şifre gir!");
-            return;
-        }
-
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("topBar").style.display = "flex";
+    function showLogin() {
+        hideAll();
+        document.getElementById("login").classList.remove("hidden");
     }
 
-    function logout() {
-        document.getElementById("loginBox").style.display = "block";
-        document.getElementById("topBar").style.display = "none";
+    function showRegister() {
+        hideAll();
+        document.getElementById("register").classList.remove("hidden");
+    }
 
-        document.getElementById("username").value = "";
-        document.getElementById("password").value = "";
+    function enterSite() {
+        hideAll();
+        document.getElementById("site").classList.remove("hidden");
+    }
+
+    function hideAll() {
+        document.querySelectorAll(".container").forEach(c => c.classList.add("hidden"));
+    }
+
+    function copyIP() {
+        navigator.clipboard.writeText("TigerNetwork.aternos.me");
+        alert("IP kopyalandı!");
+    }
+
+    function showSoon() {
+        const text = document.getElementById("soonText");
+        text.innerText = "Yakında";
+        setTimeout(() => {
+            text.innerText = "";
+        }, 5000);
     }
 </script>
 
 </body>
 </html>
+
