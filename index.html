@@ -1,135 +1,135 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>TigerNw</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #121212;
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-    }
+    <meta charset="UTF-8">
+    <title>NacoBoxPvP</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0f0f0f;
+            color: white;
+        }
 
-    .container {
-        background: #1e1e1e;
-        padding: 25px;
-        border-radius: 10px;
-        width: 300px;
-        text-align: center;
-    }
+        header {
+            background: #1c1c1c;
+            padding: 15px;
+            text-align: center;
+        }
 
-    input, button {
-        width: 100%;
-        padding: 10px;
-        margin: 8px 0;
-        border: none;
-        border-radius: 5px;
-    }
+        nav a {
+            color: #00ffcc;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
 
-    input {
-        background: #2b2b2b;
-        color: white;
-    }
+        section {
+            padding: 40px;
+            max-width: 900px;
+            margin: auto;
+        }
 
-    button {
-        background: #ff9800;
-        color: black;
-        cursor: pointer;
-        font-weight: bold;
-    }
+        .box {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
 
-    button:hover {
-        background: #ffa726;
-    }
+        button {
+            background: #00ffcc;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
-    .hidden {
-        display: none;
-    }
+        button:hover {
+            background: #00ccaa;
+        }
 
-    .discord {
-        margin-top: 15px;
-        padding: 10px;
-        background: #5865F2;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .message {
-        margin-top: 10px;
-        color: #ff9800;
-    }
-</style>
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #1c1c1c;
+            margin-top: 40px;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container" id="mainMenu">
-    <h2>Hoş Geldin</h2>
-    <button onclick="showLogin()">Giriş Yap</button>
-    <button onclick="showRegister()">Kayıt Ol</button>
-</div>
+<header>
+    <h1>NacoBoxPvP</h1>
+    <nav>
+        <a href="#tanitim">Tanıtım</a>
+        <a href="#kayit">Kayıt / Giriş</a>
+        <a href="#market">Market</a>
+        <a href="#duyuru">Duyurular</a>
+        <a href="#kurallar">Kurallar</a>
+    </nav>
+</header>
 
-<div class="container hidden" id="login">
-    <h2>Giriş Yap</h2>
-    <input type="text" placeholder="Oyuncu İsmi">
-    <input type="password" placeholder="Şifre">
-    <button onclick="enterSite()">Giriş Yap</button>
-</div>
+<section id="tanitim">
+    <div class="box">
+        <h2>🎮 Sunucu Tanıtımı</h2>
+        <p>Türkiye'nin en eğlenceli BoxPvP sunucusuna hoş geldin!</p>
+        <p><b>IP:</b> NacoBoxpvp.aternos.me</p>
+        <button onclick="kopyala()">IP'yi Kopyala</button>
+    </div>
+</section>
 
-<div class="container hidden" id="register">
-    <h2>Kayıt Ol</h2>
-    <input type="text" placeholder="Oyuncu İsmi">
-    <input type="password" placeholder="Şifre">
-    <input type="number" placeholder="Yaş">
-    <button onclick="enterSite()">Kayıt Ol</button>
-</div>
+<section id="kayit">
+    <div class="box">
+        <h2>🔐 Kayıt / Giriş</h2>
+        <p>Sunucuya giriş için oyun içi:</p>
+        <p>/register şifre şifre</p>
+        <p>/login şifre</p>
+    </div>
+</section>
 
-<div class="container hidden" id="site">
-    <h1>TigerNw</h1>
-    <button onclick="copyIP()">IP Kopyala</button>
+<section id="market">
+    <div class="box">
+        <h2>🛒 Market</h2>
+        <ul>
+            <li>💎 VIP – 50₺</li>
+            <li>🔥 Rank – 100₺</li>
+            <li>🪙 1000 Coin – 25₺</li>
+        </ul>
+        <p>Satın almak için Discord üzerinden yetkililere ulaş.</p>
+    </div>
+</section>
 
-    <div class="discord" onclick="showSoon()">Discord</div>
-    <div class="message" id="soonText"></div>
-</div>
+<section id="duyuru">
+    <div class="box">
+        <h2>📢 Duyurular</h2>
+        <p>Sunucu yeni açıldı! 🎉</p>
+        <p>Yakında eventler başlayacak.</p>
+    </div>
+</section>
+
+<section id="kurallar">
+    <div class="box">
+        <h2>📜 Kurallar</h2>
+        <ul>
+            <li>Hile kesinlikle yasaktır.</li>
+            <li>Küfür ve hakaret yasaktır.</li>
+            <li>Yetkililere saygı zorunludur.</li>
+        </ul>
+    </div>
+</section>
+
+<footer>
+    © 2026 NacoBoxPvP
+</footer>
 
 <script>
-    function showLogin() {
-        hideAll();
-        document.getElementById("login").classList.remove("hidden");
-    }
-
-    function showRegister() {
-        hideAll();
-        document.getElementById("register").classList.remove("hidden");
-    }
-
-    function enterSite() {
-        hideAll();
-        document.getElementById("site").classList.remove("hidden");
-    }
-
-    function hideAll() {
-        document.querySelectorAll(".container").forEach(c => c.classList.add("hidden"));
-    }
-
-    function copyIP() {
-        navigator.clipboard.writeText("TigerNetwork.aternos.me");
+    function kopyala() {
+        navigator.clipboard.writeText("NacoBoxpvp.aternos.me");
         alert("IP kopyalandı!");
-    }
-
-    function showSoon() {
-        const text = document.getElementById("soonText");
-        text.innerText = "Yakında";
-        setTimeout(() => {
-            text.innerText = "";
-        }, 5000);
     }
 </script>
 
 </body>
 </html>
-
