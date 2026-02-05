@@ -2,30 +2,24 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Eldrya SMP</title>
+<title>Eldrya SMP Panel</title>
 
 <style>
-*{box-sizing:border-box;font-family:Segoe UI,Arial}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Arial}
 body{
-    margin:0;
-    height:100vh;
-    background:url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee") center/cover no-repeat;
+    background:linear-gradient(135deg,#0f0f0f,#1a1a1a);
     color:#fff;
-}
-.overlay{
-    background:rgba(0,0,0,.7);
-    width:100%;
-    height:100%;
+    min-height:100vh;
     display:flex;
     align-items:center;
     justify-content:center;
 }
 .card{
-    background:rgba(25,25,25,.95);
+    background:#141414;
+    width:380px;
     padding:30px;
     border-radius:16px;
-    width:380px;
-    box-shadow:0 0 40px #000;
+    box-shadow:0 0 40px rgba(0,0,0,.8);
     display:none;
 }
 .card h2{text-align:center;margin-bottom:20px}
@@ -36,7 +30,10 @@ input,button{
     border-radius:8px;
     border:none;
 }
-input{background:#222;color:#fff}
+input{
+    background:#1f1f1f;
+    color:#fff;
+}
 button{
     background:#f59e0b;
     color:#000;
@@ -44,9 +41,16 @@ button{
     cursor:pointer;
 }
 button:hover{background:#fbbf24}
-.link{text-align:center;color:#f59e0b;cursor:pointer;margin-top:10px}
+.link{
+    text-align:center;
+    color:#f59e0b;
+    cursor:pointer;
+    margin-top:10px;
+}
+.error{color:#ef4444;text-align:center}
+.success{color:#22c55e;text-align:center}
 
-/* Panel */
+/* PANEL */
 .panel{
     display:none;
     width:92%;
@@ -59,43 +63,40 @@ button:hover{background:#fbbf24}
     margin-bottom:20px;
 }
 .box{
-    background:rgba(30,30,30,.95);
+    background:#181818;
     padding:20px;
-    border-radius:16px;
+    border-radius:14px;
     margin-bottom:20px;
 }
 .market{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
     gap:15px;
 }
 .item{
-    background:#1f1f1f;
+    background:#202020;
     padding:15px;
     border-radius:12px;
     text-align:center;
 }
 .admin{
     color:#22c55e;
-    cursor:pointer;
     font-weight:bold;
+    cursor:pointer;
 }
-.error{color:#ef4444;text-align:center}
-.success{color:#22c55e;text-align:center}
 </style>
 </head>
 
 <body>
-<div class="overlay">
 
 <!-- GİRİŞ -->
 <div class="card" id="login">
 <h2>Giriş Yap</h2>
 <input id="loginUser" placeholder="Kullanıcı Adı">
 <input id="loginPass" type="password" placeholder="Şifre">
-<button onclick="loginUserFunc()">Giriş Yap</button>
+<button onclick="login()">Giriş Yap</button>
 <div class="error" id="loginErr"></div>
-<div class="link" onclick="showRegister()">Kayıt Ol</div>
+<div class="link" onclick="goRegister()">Kayıt Ol</div>
 </div>
 
 <!-- KAYIT -->
@@ -103,17 +104,17 @@ button:hover{background:#fbbf24}
 <h2>Kayıt Ol</h2>
 <input id="regUser" placeholder="Kullanıcı Adı">
 <input id="regPass" type="password" placeholder="Şifre">
-<button onclick="registerUser()">Kayıt Ol</button>
-<div class="success" id="regOk"></div>
-<div class="link" onclick="showLogin()">Giriş Yap</div>
+<button onclick="register()">Kayıt Ol</button>
+<div class="success" id="regMsg"></div>
+<div class="link" onclick="goLogin()">Giriş Yap</div>
 </div>
 
 <!-- PANEL -->
 <div class="panel" id="panel">
 <div class="top">
-<h2>🐅 Eldrya SMP Panel</h2>
+<h2>🐅 Eldrya SMP</h2>
 <div>
-<span id="adminBtn" class="admin" onclick="showAdmin()">Bakiyesini Yükle</span>
+<span id="adminBtn" class="admin" onclick="toggleAdmin()">Bakiyesini Yükle</span>
  | Bakiye: <b id="balance">0</b>₺
  | <span class="admin" onclick="logout()">Çıkış Yap</span>
 </div>
@@ -122,7 +123,7 @@ button:hover{background:#fbbf24}
 <div class="box">
 <h3>Sunucu IP</h3>
 <button onclick="copyIP()">eldryasmp.aternos.me</button>
-<p id="copyMsg"></p>
+<p id="ipMsg"></p>
 </div>
 
 <div class="box">
@@ -136,10 +137,10 @@ button:hover{background:#fbbf24}
 
 <div class="box" id="adminBox" style="display:none">
 <h3>Oyuncuya Bakiye Yükle</h3>
-<input id="targetUser" placeholder="Oyuncu Kullanıcı Adı">
+<input id="targetUser" placeholder="Oyuncu Adı">
 <input id="amount" type="number" placeholder="Yüklenecek Bakiye">
 <button onclick="addBalance()">Yükle</button>
-<div id="adminMsg"></div>
+<p id="adminMsg"></p>
 </div>
 
 <div class="box">
@@ -147,29 +148,26 @@ button:hover{background:#fbbf24}
 <input id="githubName" placeholder="GitHub Kullanıcı Adı">
 <button onclick="giveAuth()">Yetki Ver</button>
 </div>
-
-</div>
 </div>
 
 <script>
 let currentUser=null;
 
-/* GÖSTER */
 login.style.display="block";
 
-function showRegister(){login.style.display="none";register.style.display="block"}
-function showLogin(){register.style.display="none";login.style.display="block"}
+function goRegister(){login.style.display="none";register.style.display="block"}
+function goLogin(){register.style.display="none";login.style.display="block"}
 
-function registerUser(){
+function register(){
 let u=regUser.value,p=regPass.value;
 if(!u||!p)return;
 let users=JSON.parse(localStorage.getItem("users")||"{}");
 users[u]={pass:p,balance:0};
 localStorage.setItem("users",JSON.stringify(users));
-regOk.innerText="Kayıt başarılı!";
+regMsg.innerText="Kayıt başarılı";
 }
 
-function loginUserFunc(){
+function login(){
 let users=JSON.parse(localStorage.getItem("users")||"{}");
 let u=loginUser.value,p=loginPass.value;
 if(!users[u]||users[u].pass!==p){
@@ -194,7 +192,7 @@ balance.innerText=users[currentUser].balance;
 
 function copyIP(){
 navigator.clipboard.writeText("eldryasmp.aternos.me");
-copyMsg.innerText="✔ IP kopyalandı";
+ipMsg.innerText="✔ IP kopyalandı";
 }
 
 function buy(price){
@@ -203,7 +201,6 @@ if(users[currentUser].balance<price)return alert("Yetersiz bakiye");
 users[currentUser].balance-=price;
 localStorage.setItem("users",JSON.stringify(users));
 updateBalance();
-alert("Satın alındı!");
 }
 
 function logout(){
@@ -224,8 +221,8 @@ let list=JSON.parse(localStorage.getItem("admins")||"[]");
 adminBtn.style.display=list.includes(currentUser)?"inline":"none";
 }
 
-function showAdmin(){
-adminBox.style.display="block";
+function toggleAdmin(){
+adminBox.style.display=adminBox.style.display==="none"?"block":"none";
 }
 
 function addBalance(){
