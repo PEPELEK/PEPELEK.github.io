@@ -140,8 +140,8 @@ function loginUser(username){
     document.getElementById("main").style.display="block";
     showMarket();
 
-    // Admin kontrolü
-    if(currentUser.username.toLowerCase() === "admin"){
+    // Admin kontrolü - sadece senin kullanıcı adın
+    if(currentUser.username.toLowerCase() === "eldryasadmin"){
         document.getElementById("admin-panel").style.display="block";
     } else {
         document.getElementById("admin-panel").style.display="none";
@@ -229,4 +229,3 @@ function adminAddProduct(){
 
 </body>
 </html>
-
