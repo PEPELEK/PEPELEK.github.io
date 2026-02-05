@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Havalı Oyun Sitesi</title>
+<title>Havalı Oyun Sitesi - Admin Destekli</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 /* Genel Ayarlar */
@@ -41,6 +41,13 @@ header button:hover{background:#00f0ff; color:#111;}
 #notification-panel button{padding:10px 15px; margin-left:10px; border:none; border-radius:5px;
                            background:#00f0ff; color:#111; transition:0.3s;}
 #notification-panel button:hover{background:#ff00ff; color:white;}
+
+/* Admin Paneli */
+#admin-panel{display:none; margin-top:30px; padding:20px; background:#111; border-radius:10px;}
+#admin-panel input{width:60%; padding:8px; margin:5px 0; border-radius:5px; border:none; background:#222; color:white;}
+#admin-panel button{padding:8px 12px; margin-left:5px; border:none; border-radius:5px; background:#00f0ff; color:#111; transition:0.3s;}
+#admin-panel button:hover{background:#ff00ff; color:white;}
+#admin-panel h2, #admin-panel h3{color:#00f0ff;}
 </style>
 </head>
 <body>
@@ -73,6 +80,21 @@ header button:hover{background:#00f0ff; color:#111;}
         <h2>Bildirim Bırak</h2>
         <input type="text" id="notification" placeholder="Bildirim yazın">
         <button onclick="leaveNotification()">Gönder</button>
+    </div>
+
+    <!-- Admin Paneli -->
+    <div id="admin-panel">
+        <h2>Admin Paneli</h2>
+
+        <h3>Bakiye Yükle</h3>
+        <input type="text" id="admin-player" placeholder="Oyuncu Adı">
+        <input type="number" id="admin-amount" placeholder="Yüklenecek Bakiye">
+        <button onclick="adminLoadBalance()">Yükle</button>
+
+        <h3>Market Ürün Ekle</h3>
+        <input type="text" id="admin-item-name" placeholder="Ürün Adı">
+        <input type="number" id="admin-item-price" placeholder="Fiyat">
+        <button onclick="adminAddProduct()">Ekle</button>
     </div>
 </div>
 
@@ -117,6 +139,13 @@ function loginUser(username){
     document.getElementById("login").style.display="none";
     document.getElementById("main").style.display="block";
     showMarket();
+
+    // Admin kontrolü
+    if(currentUser.username.toLowerCase() === "admin"){
+        document.getElementById("admin-panel").style.display="block";
+    } else {
+        document.getElementById("admin-panel").style.display="none";
+    }
 }
 
 // Çıkış Yap
@@ -166,7 +195,38 @@ function leaveNotification(){
         alert("Bildirim gönderildi!");
     }
 }
+
+// Admin: bakiye yükleme
+function adminLoadBalance(){
+    let playerName = document.getElementById("admin-player").value.trim();
+    let amount = parseInt(document.getElementById("admin-amount").value);
+    let player = users.find(u => u.username === playerName);
+    if(player && amount>0){
+        player.balance += amount;
+        alert(playerName + " kullanıcısına " + amount + " bakiye yüklendi!");
+    } else {
+        alert("Kullanıcı bulunamadı veya geçersiz bakiye!");
+    }
+    document.getElementById("admin-player").value="";
+    document.getElementById("admin-amount").value="";
+}
+
+// Admin: ürün ekleme
+function adminAddProduct(){
+    let name = document.getElementById("admin-item-name").value.trim();
+    let price = parseInt(document.getElementById("admin-item-price").value);
+    if(name && price>0){
+        products.push({name:name, price:price});
+        showMarket();
+        alert(name + " ürünü markete eklendi!");
+    } else {
+        alert("Geçersiz ürün veya fiyat!");
+    }
+    document.getElementById("admin-item-name").value="";
+    document.getElementById("admin-item-price").value="";
+}
 </script>
 
 </body>
 </html>
+
