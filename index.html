@@ -3,212 +3,242 @@
 <head>
 <meta charset="UTF-8">
 <title>Eldrya SMP</title>
+
 <style>
-* { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
-
-body {
-    margin: 0;
-    height: 100vh;
-    background: url("https://images.unsplash.com/photo-1511203466129-824e631920d4") no-repeat center/cover;
-    color: white;
+*{box-sizing:border-box;font-family:Segoe UI,Arial}
+body{
+    margin:0;
+    height:100vh;
+    background:url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee") center/cover no-repeat;
+    color:#fff;
 }
-
-/* Karartma */
-.overlay {
-    background: rgba(0,0,0,0.65);
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.overlay{
+    background:rgba(0,0,0,.7);
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
-
-/* Kart */
-.card {
-    background: rgba(20,20,20,0.9);
-    padding: 30px;
-    border-radius: 15px;
-    width: 360px;
-    display: none;
-    box-shadow: 0 0 30px black;
+.card{
+    background:rgba(25,25,25,.95);
+    padding:30px;
+    border-radius:16px;
+    width:380px;
+    box-shadow:0 0 40px #000;
+    display:none;
 }
-
-.card h2 {
-    text-align: center;
-    margin-bottom: 20px;
+.card h2{text-align:center;margin-bottom:20px}
+input,button{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:8px;
+    border:none;
 }
-
-input, button {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border-radius: 8px;
-    border: none;
+input{background:#222;color:#fff}
+button{
+    background:#f59e0b;
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
 }
+button:hover{background:#fbbf24}
+.link{text-align:center;color:#f59e0b;cursor:pointer;margin-top:10px}
 
-input {
-    background: #222;
-    color: white;
+/* Panel */
+.panel{
+    display:none;
+    width:92%;
+    max-width:1100px;
 }
-
-button {
-    background: orange;
-    color: black;
-    font-weight: bold;
-    cursor: pointer;
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
 }
-
-button:hover {
-    background: darkorange;
+.box{
+    background:rgba(30,30,30,.95);
+    padding:20px;
+    border-radius:16px;
+    margin-bottom:20px;
 }
-
-.link {
-    text-align: center;
-    margin-top: 10px;
-    cursor: pointer;
-    color: orange;
+.market{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
 }
-
-/* Dashboard */
-.dashboard {
-    display: none;
-    width: 90%;
-    max-width: 900px;
+.item{
+    background:#1f1f1f;
+    padding:15px;
+    border-radius:12px;
+    text-align:center;
 }
-
-.top {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+.admin{
+    color:#22c55e;
+    cursor:pointer;
+    font-weight:bold;
 }
-
-.box {
-    background: rgba(30,30,30,0.9);
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-}
-
-.market {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
-    gap: 15px;
-}
-
-.item {
-    background: #222;
-    padding: 15px;
-    border-radius: 12px;
-    text-align: center;
-}
+.error{color:#ef4444;text-align:center}
+.success{color:#22c55e;text-align:center}
 </style>
 </head>
-<body>
 
+<body>
 <div class="overlay">
 
-    <!-- GİRİŞ -->
-    <div class="card" id="login">
-        <h2>Giriş Yap</h2>
-        <input type="text" placeholder="Kullanıcı Adı">
-        <input type="password" placeholder="Şifre">
-        <button onclick="goDashboard()">Giriş Yap</button>
-        <div class="link" onclick="showRegister()">Hesabın yok mu? Kayıt Ol</div>
-    </div>
+<!-- GİRİŞ -->
+<div class="card" id="login">
+<h2>Giriş Yap</h2>
+<input id="loginUser" placeholder="Kullanıcı Adı">
+<input id="loginPass" type="password" placeholder="Şifre">
+<button onclick="loginUserFunc()">Giriş Yap</button>
+<div class="error" id="loginErr"></div>
+<div class="link" onclick="showRegister()">Kayıt Ol</div>
+</div>
 
-    <!-- KAYIT -->
-    <div class="card" id="register">
-        <h2>Kayıt Ol</h2>
-        <input type="text" placeholder="Kullanıcı Adı">
-        <input type="email" placeholder="E-posta">
-        <input type="password" placeholder="Şifre">
-        <button onclick="goDashboard()">Kayıt Ol</button>
-        <div class="link" onclick="showLogin()">Zaten hesabın var mı?</div>
-    </div>
+<!-- KAYIT -->
+<div class="card" id="register">
+<h2>Kayıt Ol</h2>
+<input id="regUser" placeholder="Kullanıcı Adı">
+<input id="regPass" type="password" placeholder="Şifre">
+<button onclick="registerUser()">Kayıt Ol</button>
+<div class="success" id="regOk"></div>
+<div class="link" onclick="showLogin()">Giriş Yap</div>
+</div>
 
-    <!-- DASHBOARD -->
-    <div class="dashboard" id="dashboard">
-        <div class="top">
-            <h2>🐅 Eldrya SMP Panel</h2>
-            <div>Bakiye: <b id="balance">100</b>₺</div>
-        </div>
+<!-- PANEL -->
+<div class="panel" id="panel">
+<div class="top">
+<h2>🐅 Eldrya SMP Panel</h2>
+<div>
+<span id="adminBtn" class="admin" onclick="showAdmin()">Bakiyesini Yükle</span>
+ | Bakiye: <b id="balance">0</b>₺
+ | <span class="admin" onclick="logout()">Çıkış Yap</span>
+</div>
+</div>
 
-        <div class="box">
-            <h3>Sunucu Adresi</h3>
-            <button onclick="copyIP()">eldryasmp.aternos.me</button>
-            <p id="copyText"></p>
-        </div>
+<div class="box">
+<h3>Sunucu IP</h3>
+<button onclick="copyIP()">eldryasmp.aternos.me</button>
+<p id="copyMsg"></p>
+</div>
 
-        <div class="box">
-            <h3>Market</h3>
-            <div class="market">
-                <div class="item">
-                    <h4>VIP</h4>
-                    <p>50₺</p>
-                    <button onclick="buy(50)">Satın Al</button>
-                </div>
-                <div class="item">
-                    <h4>VIP+</h4>
-                    <p>80₺</p>
-                    <button onclick="buy(80)">Satın Al</button>
-                </div>
-                <div class="item">
-                    <h4>MVP</h4>
-                    <p>120₺</p>
-                    <button onclick="buy(120)">Satın Al</button>
-                </div>
-            </div>
-        </div>
+<div class="box">
+<h3>Market</h3>
+<div class="market">
+<div class="item"><h4>VIP</h4><p>50₺</p><button onclick="buy(50)">Satın Al</button></div>
+<div class="item"><h4>VIP+</h4><p>80₺</p><button onclick="buy(80)">Satın Al</button></div>
+<div class="item"><h4>MVP</h4><p>120₺</p><button onclick="buy(120)">Satın Al</button></div>
+</div>
+</div>
 
-        <div class="box">
-            <h3>Bakiye Yükle</h3>
-            <button onclick="addBalance(50)">+50₺</button>
-            <button onclick="addBalance(100)">+100₺</button>
-        </div>
-    </div>
+<div class="box" id="adminBox" style="display:none">
+<h3>Oyuncuya Bakiye Yükle</h3>
+<input id="targetUser" placeholder="Oyuncu Kullanıcı Adı">
+<input id="amount" type="number" placeholder="Yüklenecek Bakiye">
+<button onclick="addBalance()">Yükle</button>
+<div id="adminMsg"></div>
+</div>
 
+<div class="box">
+<h3>Yetki Ver (GitHub)</h3>
+<input id="githubName" placeholder="GitHub Kullanıcı Adı">
+<button onclick="giveAuth()">Yetki Ver</button>
+</div>
+
+</div>
 </div>
 
 <script>
-let balance = 100;
+let currentUser=null;
 
-function showRegister(){
-    login.style.display = "none";
-    register.style.display = "block";
+/* GÖSTER */
+login.style.display="block";
+
+function showRegister(){login.style.display="none";register.style.display="block"}
+function showLogin(){register.style.display="none";login.style.display="block"}
+
+function registerUser(){
+let u=regUser.value,p=regPass.value;
+if(!u||!p)return;
+let users=JSON.parse(localStorage.getItem("users")||"{}");
+users[u]={pass:p,balance:0};
+localStorage.setItem("users",JSON.stringify(users));
+regOk.innerText="Kayıt başarılı!";
 }
 
-function showLogin(){
-    register.style.display = "none";
-    login.style.display = "block";
+function loginUserFunc(){
+let users=JSON.parse(localStorage.getItem("users")||"{}");
+let u=loginUser.value,p=loginPass.value;
+if(!users[u]||users[u].pass!==p){
+loginErr.innerText="Böyle bir hesap bulunamadı";
+return;
+}
+currentUser=u;
+showPanel();
 }
 
-function goDashboard(){
-    login.style.display = "none";
-    register.style.display = "none";
-    dashboard.style.display = "block";
+function showPanel(){
+login.style.display=register.style.display="none";
+panel.style.display="block";
+updateBalance();
+checkAdmin();
+}
+
+function updateBalance(){
+let users=JSON.parse(localStorage.getItem("users"));
+balance.innerText=users[currentUser].balance;
 }
 
 function copyIP(){
-    navigator.clipboard.writeText("eldryasmp.aternos.me");
-    copyText.innerText = "✔ IP kopyalandı!";
+navigator.clipboard.writeText("eldryasmp.aternos.me");
+copyMsg.innerText="✔ IP kopyalandı";
 }
 
 function buy(price){
-    if(balance >= price){
-        balance -= price;
-        document.getElementById("balance").innerText = balance;
-        alert("Satın alma başarılı!");
-    } else {
-        alert("Yetersiz bakiye!");
-    }
+let users=JSON.parse(localStorage.getItem("users"));
+if(users[currentUser].balance<price)return alert("Yetersiz bakiye");
+users[currentUser].balance-=price;
+localStorage.setItem("users",JSON.stringify(users));
+updateBalance();
+alert("Satın alındı!");
 }
 
-function addBalance(amount){
-    balance += amount;
-    document.getElementById("balance").innerText = balance;
+function logout(){
+currentUser=null;
+panel.style.display="none";
+login.style.display="block";
 }
 
-login.style.display = "block";
+function giveAuth(){
+let list=JSON.parse(localStorage.getItem("admins")||"[]");
+list.push(githubName.value);
+localStorage.setItem("admins",JSON.stringify(list));
+alert("Yetki verildi");
+}
+
+function checkAdmin(){
+let list=JSON.parse(localStorage.getItem("admins")||"[]");
+adminBtn.style.display=list.includes(currentUser)?"inline":"none";
+}
+
+function showAdmin(){
+adminBox.style.display="block";
+}
+
+function addBalance(){
+let list=JSON.parse(localStorage.getItem("admins")||"[]");
+if(!list.includes(currentUser)){
+adminMsg.innerText="Erişiminiz yok";
+return;
+}
+let users=JSON.parse(localStorage.getItem("users"));
+users[targetUser.value].balance+=Number(amount.value);
+localStorage.setItem("users",JSON.stringify(users));
+adminMsg.innerText="Bakiye yüklendi";
+}
 </script>
 
 </body>
