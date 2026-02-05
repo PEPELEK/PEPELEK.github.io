@@ -5,24 +5,28 @@
 <title>Eldrya SMP Panel</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Arial}
+*{box-sizing:border-box;font-family:Segoe UI,Arial}
 body{
-    background:linear-gradient(135deg,#0f0f0f,#1a1a1a);
-    color:#fff;
+    margin:0;
     min-height:100vh;
+    background:linear-gradient(135deg,#0b0b0b,#1a1a1a);
+    color:#fff;
     display:flex;
-    align-items:center;
     justify-content:center;
+    align-items:center;
 }
+
+/* ORTA KARTLAR */
 .card{
-    background:#141414;
     width:380px;
+    background:#141414;
     padding:30px;
     border-radius:16px;
     box-shadow:0 0 40px rgba(0,0,0,.8);
     display:none;
 }
 .card h2{text-align:center;margin-bottom:20px}
+
 input,button{
     width:100%;
     padding:12px;
@@ -53,7 +57,7 @@ button:hover{background:#fbbf24}
 /* PANEL */
 .panel{
     display:none;
-    width:92%;
+    width:95%;
     max-width:1100px;
 }
 .top{
@@ -90,153 +94,198 @@ button:hover{background:#fbbf24}
 <body>
 
 <!-- GİRİŞ -->
-<div class="card" id="login">
-<h2>Giriş Yap</h2>
-<input id="loginUser" placeholder="Kullanıcı Adı">
-<input id="loginPass" type="password" placeholder="Şifre">
-<button onclick="login()">Giriş Yap</button>
-<div class="error" id="loginErr"></div>
-<div class="link" onclick="goRegister()">Kayıt Ol</div>
+<div class="card" id="loginCard">
+    <h2>Giriş Yap</h2>
+    <input id="loginUser" placeholder="Kullanıcı Adı">
+    <input id="loginPass" type="password" placeholder="Şifre">
+    <button id="loginBtn">Giriş Yap</button>
+    <div class="error" id="loginError"></div>
+    <div class="link" id="toRegister">Kayıt Ol</div>
 </div>
 
 <!-- KAYIT -->
-<div class="card" id="register">
-<h2>Kayıt Ol</h2>
-<input id="regUser" placeholder="Kullanıcı Adı">
-<input id="regPass" type="password" placeholder="Şifre">
-<button onclick="register()">Kayıt Ol</button>
-<div class="success" id="regMsg"></div>
-<div class="link" onclick="goLogin()">Giriş Yap</div>
+<div class="card" id="registerCard">
+    <h2>Kayıt Ol</h2>
+    <input id="regUser" placeholder="Kullanıcı Adı">
+    <input id="regPass" type="password" placeholder="Şifre">
+    <button id="registerBtn">Kayıt Ol</button>
+    <div class="success" id="registerMsg"></div>
+    <div class="link" id="toLogin">Giriş Yap</div>
 </div>
 
 <!-- PANEL -->
 <div class="panel" id="panel">
-<div class="top">
-<h2>🐅 Eldrya SMP</h2>
-<div>
-<span id="adminBtn" class="admin" onclick="toggleAdmin()">Bakiyesini Yükle</span>
- | Bakiye: <b id="balance">0</b>₺
- | <span class="admin" onclick="logout()">Çıkış Yap</span>
-</div>
-</div>
+    <div class="top">
+        <h2>🐅 Eldrya SMP</h2>
+        <div>
+            <span id="adminBtn" class="admin">Bakiyesini Yükle</span>
+            | Bakiye: <b id="balance">0</b>₺
+            | <span class="admin" id="logoutBtn">Çıkış Yap</span>
+        </div>
+    </div>
 
-<div class="box">
-<h3>Sunucu IP</h3>
-<button onclick="copyIP()">eldryasmp.aternos.me</button>
-<p id="ipMsg"></p>
-</div>
+    <div class="box">
+        <h3>Sunucu IP</h3>
+        <button id="copyIpBtn">eldryasmp.aternos.me</button>
+        <p id="ipMsg"></p>
+    </div>
 
-<div class="box">
-<h3>Market</h3>
-<div class="market">
-<div class="item"><h4>VIP</h4><p>50₺</p><button onclick="buy(50)">Satın Al</button></div>
-<div class="item"><h4>VIP+</h4><p>80₺</p><button onclick="buy(80)">Satın Al</button></div>
-<div class="item"><h4>MVP</h4><p>120₺</p><button onclick="buy(120)">Satın Al</button></div>
-</div>
-</div>
+    <div class="box">
+        <h3>Market</h3>
+        <div class="market">
+            <div class="item">
+                <h4>VIP</h4>
+                <p>50₺</p>
+                <button onclick="buy(50)">Satın Al</button>
+            </div>
+            <div class="item">
+                <h4>VIP+</h4>
+                <p>80₺</p>
+                <button onclick="buy(80)">Satın Al</button>
+            </div>
+            <div class="item">
+                <h4>MVP</h4>
+                <p>120₺</p>
+                <button onclick="buy(120)">Satın Al</button>
+            </div>
+        </div>
+    </div>
 
-<div class="box" id="adminBox" style="display:none">
-<h3>Oyuncuya Bakiye Yükle</h3>
-<input id="targetUser" placeholder="Oyuncu Adı">
-<input id="amount" type="number" placeholder="Yüklenecek Bakiye">
-<button onclick="addBalance()">Yükle</button>
-<p id="adminMsg"></p>
-</div>
+    <div class="box" id="adminBox" style="display:none">
+        <h3>Oyuncuya Bakiye Yükle</h3>
+        <input id="targetUser" placeholder="Oyuncu Adı">
+        <input id="amount" type="number" placeholder="Yüklenecek Bakiye">
+        <button id="addBalanceBtn">Yükle</button>
+        <p id="adminMsg"></p>
+    </div>
 
-<div class="box">
-<h3>Yetki Ver (GitHub)</h3>
-<input id="githubName" placeholder="GitHub Kullanıcı Adı">
-<button onclick="giveAuth()">Yetki Ver</button>
-</div>
+    <div class="box">
+        <h3>Yetki Ver (GitHub)</h3>
+        <input id="githubName" placeholder="GitHub Kullanıcı Adı">
+        <button id="giveAuthBtn">Yetki Ver</button>
+    </div>
 </div>
 
 <script>
-let currentUser=null;
+/* ELEMENTLER */
+const loginCard = document.getElementById("loginCard");
+const registerCard = document.getElementById("registerCard");
+const panel = document.getElementById("panel");
+const balanceText = document.getElementById("balance");
+const adminBtn = document.getElementById("adminBtn");
+const adminBox = document.getElementById("adminBox");
+const adminMsg = document.getElementById("adminMsg");
 
-login.style.display="block";
+let currentUser = null;
 
-function goRegister(){login.style.display="none";register.style.display="block"}
-function goLogin(){register.style.display="none";login.style.display="block"}
+/* BAŞLANGIÇ */
+loginCard.style.display = "block";
 
-function register(){
-let u=regUser.value,p=regPass.value;
-if(!u||!p)return;
-let users=JSON.parse(localStorage.getItem("users")||"{}");
-users[u]={pass:p,balance:0};
-localStorage.setItem("users",JSON.stringify(users));
-regMsg.innerText="Kayıt başarılı";
+/* GEÇİŞLER */
+document.getElementById("toRegister").onclick = () => {
+    loginCard.style.display="none";
+    registerCard.style.display="block";
+};
+document.getElementById("toLogin").onclick = () => {
+    registerCard.style.display="none";
+    loginCard.style.display="block";
+};
+
+/* KAYIT */
+document.getElementById("registerBtn").onclick = () => {
+    const u = regUser.value;
+    const p = regPass.value;
+    if(!u || !p) return;
+
+    const users = JSON.parse(localStorage.getItem("users")||"{}");
+    users[u] = { pass:p, balance:0 };
+    localStorage.setItem("users", JSON.stringify(users));
+    registerMsg.innerText = "Kayıt başarılı";
+};
+
+/* GİRİŞ */
+document.getElementById("loginBtn").onclick = () => {
+    const u = loginUser.value;
+    const p = loginPass.value;
+    const users = JSON.parse(localStorage.getItem("users")||"{}");
+
+    if(!users[u] || users[u].pass !== p){
+        loginError.innerText = "Böyle bir hesap bulunamadı";
+        return;
+    }
+
+    currentUser = u;
+    loginCard.style.display = registerCard.style.display = "none";
+    panel.style.display = "block";
+    refresh();
+};
+
+/* PANEL */
+function refresh(){
+    const users = JSON.parse(localStorage.getItem("users"));
+    balanceText.innerText = users[currentUser].balance;
+
+    const admins = JSON.parse(localStorage.getItem("admins")||"[]");
+    adminBtn.style.display = admins.includes(currentUser) ? "inline" : "none";
 }
 
-function login(){
-let users=JSON.parse(localStorage.getItem("users")||"{}");
-let u=loginUser.value,p=loginPass.value;
-if(!users[u]||users[u].pass!==p){
-loginErr.innerText="Böyle bir hesap bulunamadı";
-return;
-}
-currentUser=u;
-showPanel();
-}
+/* IP KOPYALA */
+document.getElementById("copyIpBtn").onclick = () => {
+    navigator.clipboard.writeText("eldryasmp.aternos.me");
+    ipMsg.innerText = "✔ IP kopyalandı";
+};
 
-function showPanel(){
-login.style.display=register.style.display="none";
-panel.style.display="block";
-updateBalance();
-checkAdmin();
-}
-
-function updateBalance(){
-let users=JSON.parse(localStorage.getItem("users"));
-balance.innerText=users[currentUser].balance;
-}
-
-function copyIP(){
-navigator.clipboard.writeText("eldryasmp.aternos.me");
-ipMsg.innerText="✔ IP kopyalandı";
-}
-
+/* MARKET */
 function buy(price){
-let users=JSON.parse(localStorage.getItem("users"));
-if(users[currentUser].balance<price)return alert("Yetersiz bakiye");
-users[currentUser].balance-=price;
-localStorage.setItem("users",JSON.stringify(users));
-updateBalance();
+    const users = JSON.parse(localStorage.getItem("users"));
+    if(users[currentUser].balance < price){
+        alert("Yetersiz bakiye");
+        return;
+    }
+    users[currentUser].balance -= price;
+    localStorage.setItem("users", JSON.stringify(users));
+    refresh();
 }
 
-function logout(){
-currentUser=null;
-panel.style.display="none";
-login.style.display="block";
-}
+/* ÇIKIŞ */
+document.getElementById("logoutBtn").onclick = () => {
+    currentUser = null;
+    panel.style.display="none";
+    loginCard.style.display="block";
+};
 
-function giveAuth(){
-let list=JSON.parse(localStorage.getItem("admins")||"[]");
-list.push(githubName.value);
-localStorage.setItem("admins",JSON.stringify(list));
-alert("Yetki verildi");
-}
+/* YETKİ */
+document.getElementById("giveAuthBtn").onclick = () => {
+    const list = JSON.parse(localStorage.getItem("admins")||"[]");
+    list.push(githubName.value);
+    localStorage.setItem("admins", JSON.stringify(list));
+    alert("Yetki verildi");
+};
 
-function checkAdmin(){
-let list=JSON.parse(localStorage.getItem("admins")||"[]");
-adminBtn.style.display=list.includes(currentUser)?"inline":"none";
-}
+/* ADMIN */
+adminBtn.onclick = () => {
+    const admins = JSON.parse(localStorage.getItem("admins")||"[]");
+    if(!admins.includes(currentUser)){
+        adminMsg.innerText = "Erişiminiz yok";
+        return;
+    }
+    adminBox.style.display = adminBox.style.display==="none"?"block":"none";
+};
 
-function toggleAdmin(){
-adminBox.style.display=adminBox.style.display==="none"?"block":"none";
-}
-
-function addBalance(){
-let list=JSON.parse(localStorage.getItem("admins")||"[]");
-if(!list.includes(currentUser)){
-adminMsg.innerText="Erişiminiz yok";
-return;
-}
-let users=JSON.parse(localStorage.getItem("users"));
-users[targetUser.value].balance+=Number(amount.value);
-localStorage.setItem("users",JSON.stringify(users));
-adminMsg.innerText="Bakiye yüklendi";
-}
+document.getElementById("addBalanceBtn").onclick = () => {
+    const admins = JSON.parse(localStorage.getItem("admins")||"[]");
+    if(!admins.includes(currentUser)){
+        adminMsg.innerText = "Erişiminiz yok";
+        return;
+    }
+    const users = JSON.parse(localStorage.getItem("users"));
+    users[targetUser.value].balance += Number(amount.value);
+    localStorage.setItem("users", JSON.stringify(users));
+    adminMsg.innerText = "Bakiye yüklendi";
+};
 </script>
 
 </body>
 </html>
+
+
