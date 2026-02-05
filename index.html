@@ -1,291 +1,133 @@
+<?php
+// db.php - veritabanı bağlantısı
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "oyunsitesi";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) { die("Connection failed: " . $conn->connect_error); }
+session_start();
+?>
+
+<?php
+// index.php - giriş yapmış kullanıcıları görebileceğin ana sayfa
+include 'db.php';
+
+// Kullanıcı çıkış yaparsa session temizle
+if(isset($_GET['logout'])){
+    session_destroy();
+    header("Location: login.php");
+    exit();
+}
+
+// Kullanıcı giriş yapmışsa bilgileri al
+if(isset($_SESSION['user_id'])){
+    $userid = $_SESSION['user_id'];
+    $sql = "SELECT username, balance FROM users WHERE id='$userid'";
+    $result = $conn->query($sql);
+    $user = $result->fetch_assoc();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Eldrya SMP Panel</title>
-
+<title>Oyun Sitesi</title>
 <style>
-*{box-sizing:border-box;font-family:Segoe UI,Arial}
-body{
-    margin:0;
-    min-height:100vh;
-    background:linear-gradient(135deg,#0b0b0b,#1a1a1a);
-    color:#fff;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-/* ORTA KARTLAR */
-.card{
-    width:380px;
-    background:#141414;
-    padding:30px;
-    border-radius:16px;
-    box-shadow:0 0 40px rgba(0,0,0,.8);
-    display:none;
-}
-.card h2{text-align:center;margin-bottom:20px}
-
-input,button{
-    width:100%;
-    padding:12px;
-    margin:8px 0;
-    border-radius:8px;
-    border:none;
-}
-input{
-    background:#1f1f1f;
-    color:#fff;
-}
-button{
-    background:#f59e0b;
-    color:#000;
-    font-weight:bold;
-    cursor:pointer;
-}
-button:hover{background:#fbbf24}
-.link{
-    text-align:center;
-    color:#f59e0b;
-    cursor:pointer;
-    margin-top:10px;
-}
-.error{color:#ef4444;text-align:center}
-.success{color:#22c55e;text-align:center}
-
-/* PANEL */
-.panel{
-    display:none;
-    width:95%;
-    max-width:1100px;
-}
-.top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-}
-.box{
-    background:#181818;
-    padding:20px;
-    border-radius:14px;
-    margin-bottom:20px;
-}
-.market{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:15px;
-}
-.item{
-    background:#202020;
-    padding:15px;
-    border-radius:12px;
-    text-align:center;
-}
-.admin{
-    color:#22c55e;
-    font-weight:bold;
-    cursor:pointer;
-}
+body{ font-family: Arial; background:#f4f4f4; margin:0; padding:0;}
+header{ background:#222; color:white; padding:10px; display:flex; justify-content:space-between;}
+button{padding:5px 10px; margin-left:5px; cursor:pointer;}
+#market, #admin-panel{margin:20px; padding:20px; background:white; border-radius:5px;}
+input{padding:5px; margin:5px 0;}
 </style>
 </head>
-
 <body>
 
-<!-- GİRİŞ -->
-<div class="card" id="loginCard">
-    <h2>Giriş Yap</h2>
-    <input id="loginUser" placeholder="Kullanıcı Adı">
-    <input id="loginPass" type="password" placeholder="Şifre">
-    <button id="loginBtn">Giriş Yap</button>
-    <div class="error" id="loginError"></div>
-    <div class="link" id="toRegister">Kayıt Ol</div>
+<header>
+    <div>
+        <?php if(isset($user)): ?>
+            Hoşgeldin, <strong><?php echo htmlspecialchars($user['username']); ?></strong>
+        <?php else: ?>
+            Ziyaretçi
+        <?php endif; ?>
+    </div>
+    <div>
+        <?php if(isset($user)): ?>
+            <button onclick="alert('Mevcut bakiye: <?php echo $user['balance']; ?>')">Bakiye</button>
+            <button onclick="window.location='?logout=true'">Çıkış Yap</button>
+        <?php else: ?>
+            <a href="login.php"><button>Giriş Yap</button></a>
+            <a href="register.php"><button>Kayıt Ol</button></a>
+        <?php endif; ?>
+        <button onclick="copyText()">Kopyala</button>
+    </div>
+</header>
+
+<div id="market">
+    <h2>Market</h2>
+    <?php
+    $products = $conn->query("SELECT * FROM products");
+    while($p = $products->fetch_assoc()){
+        echo "<div>";
+        echo "Ürün: ".htmlspecialchars($p['name'])." - Bakiye: ".$p['price'];
+        echo " <button onclick=\"buyProduct(".$p['id'].")\">Satın Al</button>";
+        echo "</div>";
+    }
+    ?>
 </div>
 
-<!-- KAYIT -->
-<div class="card" id="registerCard">
-    <h2>Kayıt Ol</h2>
-    <input id="regUser" placeholder="Kullanıcı Adı">
-    <input id="regPass" type="password" placeholder="Şifre">
-    <button id="registerBtn">Kayıt Ol</button>
-    <div class="success" id="registerMsg"></div>
-    <div class="link" id="toLogin">Giriş Yap</div>
+<?php if(isset($user) && $user['username']=="admin"): ?>
+<div id="admin-panel">
+    <h2>Admin Paneli</h2>
+    <h3>Bakiye Yükle</h3>
+    <form method="post">
+        Kullanıcı Adı: <input type="text" name="player"><br>
+        Yüklenecek Bakiye: <input type="number" name="amount"><br>
+        <button type="submit" name="load_balance">Yükle</button>
+    </form>
+
+    <h3>Market Ürün Ekle</h3>
+    <form method="post">
+        Ürün Adı: <input type="text" name="item_name"><br>
+        Fiyat: <input type="number" name="item_price"><br>
+        <button type="submit" name="add_product">Ekle</button>
+    </form>
 </div>
-
-<!-- PANEL -->
-<div class="panel" id="panel">
-    <div class="top">
-        <h2>🐅 Eldrya SMP</h2>
-        <div>
-            <span id="adminBtn" class="admin">Bakiyesini Yükle</span>
-            | Bakiye: <b id="balance">0</b>₺
-            | <span class="admin" id="logoutBtn">Çıkış Yap</span>
-        </div>
-    </div>
-
-    <div class="box">
-        <h3>Sunucu IP</h3>
-        <button id="copyIpBtn">eldryasmp.aternos.me</button>
-        <p id="ipMsg"></p>
-    </div>
-
-    <div class="box">
-        <h3>Market</h3>
-        <div class="market">
-            <div class="item">
-                <h4>VIP</h4>
-                <p>50₺</p>
-                <button onclick="buy(50)">Satın Al</button>
-            </div>
-            <div class="item">
-                <h4>VIP+</h4>
-                <p>80₺</p>
-                <button onclick="buy(80)">Satın Al</button>
-            </div>
-            <div class="item">
-                <h4>MVP</h4>
-                <p>120₺</p>
-                <button onclick="buy(120)">Satın Al</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="box" id="adminBox" style="display:none">
-        <h3>Oyuncuya Bakiye Yükle</h3>
-        <input id="targetUser" placeholder="Oyuncu Adı">
-        <input id="amount" type="number" placeholder="Yüklenecek Bakiye">
-        <button id="addBalanceBtn">Yükle</button>
-        <p id="adminMsg"></p>
-    </div>
-
-    <div class="box">
-        <h3>Yetki Ver (GitHub)</h3>
-        <input id="githubName" placeholder="GitHub Kullanıcı Adı">
-        <button id="giveAuthBtn">Yetki Ver</button>
-    </div>
-</div>
+<?php endif; ?>
 
 <script>
-/* ELEMENTLER */
-const loginCard = document.getElementById("loginCard");
-const registerCard = document.getElementById("registerCard");
-const panel = document.getElementById("panel");
-const balanceText = document.getElementById("balance");
-const adminBtn = document.getElementById("adminBtn");
-const adminBox = document.getElementById("adminBox");
-const adminMsg = document.getElementById("adminMsg");
-
-let currentUser = null;
-
-/* BAŞLANGIÇ */
-loginCard.style.display = "block";
-
-/* GEÇİŞLER */
-document.getElementById("toRegister").onclick = () => {
-    loginCard.style.display="none";
-    registerCard.style.display="block";
-};
-document.getElementById("toLogin").onclick = () => {
-    registerCard.style.display="none";
-    loginCard.style.display="block";
-};
-
-/* KAYIT */
-document.getElementById("registerBtn").onclick = () => {
-    const u = regUser.value;
-    const p = regPass.value;
-    if(!u || !p) return;
-
-    const users = JSON.parse(localStorage.getItem("users")||"{}");
-    users[u] = { pass:p, balance:0 };
-    localStorage.setItem("users", JSON.stringify(users));
-    registerMsg.innerText = "Kayıt başarılı";
-};
-
-/* GİRİŞ */
-document.getElementById("loginBtn").onclick = () => {
-    const u = loginUser.value;
-    const p = loginPass.value;
-    const users = JSON.parse(localStorage.getItem("users")||"{}");
-
-    if(!users[u] || users[u].pass !== p){
-        loginError.innerText = "Böyle bir hesap bulunamadı";
-        return;
-    }
-
-    currentUser = u;
-    loginCard.style.display = registerCard.style.display = "none";
-    panel.style.display = "block";
-    refresh();
-};
-
-/* PANEL */
-function refresh(){
-    const users = JSON.parse(localStorage.getItem("users"));
-    balanceText.innerText = users[currentUser].balance;
-
-    const admins = JSON.parse(localStorage.getItem("admins")||"[]");
-    adminBtn.style.display = admins.includes(currentUser) ? "inline" : "none";
-}
-
-/* IP KOPYALA */
-document.getElementById("copyIpBtn").onclick = () => {
+function copyText(){
     navigator.clipboard.writeText("eldryasmp.aternos.me");
-    ipMsg.innerText = "✔ IP kopyalandı";
-};
-
-/* MARKET */
-function buy(price){
-    const users = JSON.parse(localStorage.getItem("users"));
-    if(users[currentUser].balance < price){
-        alert("Yetersiz bakiye");
-        return;
-    }
-    users[currentUser].balance -= price;
-    localStorage.setItem("users", JSON.stringify(users));
-    refresh();
+    alert("Kopyalandı!");
 }
 
-/* ÇIKIŞ */
-document.getElementById("logoutBtn").onclick = () => {
-    currentUser = null;
-    panel.style.display="none";
-    loginCard.style.display="block";
-};
-
-/* YETKİ */
-document.getElementById("giveAuthBtn").onclick = () => {
-    const list = JSON.parse(localStorage.getItem("admins")||"[]");
-    list.push(githubName.value);
-    localStorage.setItem("admins", JSON.stringify(list));
-    alert("Yetki verildi");
-};
-
-/* ADMIN */
-adminBtn.onclick = () => {
-    const admins = JSON.parse(localStorage.getItem("admins")||"[]");
-    if(!admins.includes(currentUser)){
-        adminMsg.innerText = "Erişiminiz yok";
-        return;
-    }
-    adminBox.style.display = adminBox.style.display==="none"?"block":"none";
-};
-
-document.getElementById("addBalanceBtn").onclick = () => {
-    const admins = JSON.parse(localStorage.getItem("admins")||"[]");
-    if(!admins.includes(currentUser)){
-        adminMsg.innerText = "Erişiminiz yok";
-        return;
-    }
-    const users = JSON.parse(localStorage.getItem("users"));
-    users[targetUser.value].balance += Number(amount.value);
-    localStorage.setItem("users", JSON.stringify(users));
-    adminMsg.innerText = "Bakiye yüklendi";
-};
+function buyProduct(id){
+    fetch('buy.php?id='+id)
+    .then(res=>res.text())
+    .then(alert)
+    .then(()=>location.reload());
+}
 </script>
 
 </body>
 </html>
 
+<?php
+// Admin işlemleri
+if(isset($_POST['load_balance'])){
+    $player = $_POST['player'];
+    $amount = (int)$_POST['amount'];
+    $conn->query("UPDATE users SET balance=balance+$amount WHERE username='$player'");
+    echo "<script>alert('Bakiye yüklendi!');</script>";
+}
+
+if(isset($_POST['add_product'])){
+    $name = $_POST['item_name'];
+    $price = (int)$_POST['item_price'];
+    $conn->query("INSERT INTO products(name,price) VALUES('$name',$price)");
+    echo "<script>alert('Ürün eklendi!');</script>";
+}
+?>
 
