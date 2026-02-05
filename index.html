@@ -2,59 +2,192 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Havalı Oyun Sitesi - Admin Destekli</title>
+<title>RadeuxCraft Oyun Sitesi</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 /* Genel Ayarlar */
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Press Start 2P', cursive; background:#0f0f1a; color:white; overflow-x:hidden;}
-button{cursor:pointer; font-family:'Press Start 2P', cursive;}
+body{
+    font-family:'Press Start 2P', cursive;
+    background: linear-gradient(135deg, #6a0dad, #999);
+    color:white;
+    overflow-x:hidden;
+    height:100vh;
+    animation: gradientShift 15s ease infinite;
+}
+@keyframes gradientShift{
+    0%{background: linear-gradient(135deg,#6a0dad,#999);}
+    50%{background: linear-gradient(135deg,#999,#6a0dad);}
+    100%{background: linear-gradient(135deg,#6a0dad,#999);}
+}
+button{cursor:pointer; font-family:'Press Start 2P', cursive; transition:0.3s;}
 
 /* Giriş / Kayıt Ekranı */
-#login{position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
-      background:#1a1a2e; padding:40px; border-radius:15px; width:300px; text-align:center;
-      box-shadow:0 0 20px #00f0ff,0 0 40px #ff00ff;}
-#login input{width:90%; padding:10px; margin:10px 0; border:none; border-radius:5px; background:#222; color:white;}
-#login button{width:95%; padding:10px; margin-top:10px; border:none; border-radius:5px;
-              background:linear-gradient(45deg,#ff00ff,#00f0ff); color:white; font-weight:bold;
-              transition:0.3s;}
-#login button:hover{box-shadow:0 0 15px #00f0ff,0 0 15px #ff00ff; transform:scale(1.05);}
+#login{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background: rgba(0,0,0,0.8);
+    padding:50px;
+    border-radius:20px;
+    width:350px;
+    text-align:center;
+    box-shadow:0 0 20px #ff00ff,0 0 30px #00ffff;
+    border:2px solid #fff;
+}
+#login h2{
+    margin-bottom:20px;
+    color:#ff00ff;
+    text-shadow:0 0 10px #ff00ff;
+}
+#login input{
+    width:90%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:8px;
+    border:none;
+    background:#222;
+    color:white;
+    font-size:12px;
+}
+#login button{
+    width:95%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(45deg,#ff00ff,#00ffff);
+    color:white;
+    font-weight:bold;
+    box-shadow:0 0 10px #ff00ff,0 0 10px #00ffff;
+}
+#login button:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 20px #ff00ff,0 0 20px #00ffff;
+}
 
 /* Ana Sayfa */
-#main{display:none; padding:20px;}
-header{display:flex; justify-content:space-between; align-items:center; padding:10px 20px;
-       background:#111; border-bottom:2px solid #00f0ff; border-radius:0 0 10px 10px;}
-header div span{color:#00f0ff;}
-header button{margin-left:10px; padding:5px 10px; border:none; border-radius:5px;
-               background:#222; color:#00f0ff; transition:0.3s;}
-header button:hover{background:#00f0ff; color:#111;}
+#main{
+    display:none;
+    padding:30px;
+}
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background: rgba(0,0,0,0.6);
+    padding:15px 30px;
+    border-radius:10px;
+    box-shadow:0 0 15px #ff00ff;
+}
+header div span{color:#00ffff; font-size:14px;}
+header button{
+    padding:8px 15px;
+    margin-left:10px;
+    border:none;
+    border-radius:10px;
+    background:#222;
+    color:#00ffff;
+}
+header button:hover{
+    background:#00ffff;
+    color:#111;
+    box-shadow:0 0 10px #ff00ff;
+}
 
-/* Market */
-#market{display:flex; flex-wrap:wrap; margin-top:20px;}
-.product{background:#1a1a2e; margin:10px; padding:15px; border-radius:10px; width:150px;
-         text-align:center; box-shadow:0 0 10px #00f0ff; transition:0.3s;}
-.product:hover{transform:scale(1.05); box-shadow:0 0 20px #ff00ff;}
+/* IP Kopyala Butonu */
+#ip-section{
+    margin-top:50px;
+    text-align:center;
+}
+#ip-section button{
+    font-size:14px;
+    padding:15px 25px;
+    border-radius:15px;
+    background:linear-gradient(45deg,#ff00ff,#00ffff);
+    color:white;
+    font-weight:bold;
+    border:none;
+    box-shadow:0 0 15px #ff00ff,0 0 15px #00ffff;
+    transition:0.3s;
+}
+#ip-section button:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 25px #ff00ff,0 0 25px #00ffff;
+}
+
+/* Market / Kartlar */
+#market{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-top:50px;
+}
+.card{
+    background: rgba(0,0,0,0.7);
+    width:200px;
+    margin:15px;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 0 10px #ff00ff;
+    transition:0.3s;
+    text-align:center;
+}
+.card:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 20px #00ffff;
+}
+.card h3{
+    margin-bottom:15px;
+    color:#00ffff;
+}
+.card button{
+    padding:10px 15px;
+    border:none;
+    border-radius:10px;
+    background:#222;
+    color:#00ffff;
+    transition:0.3s;
+}
+.card button:hover{
+    background:#00ffff;
+    color:#111;
+    box-shadow:0 0 10px #ff00ff;
+}
 
 /* Bildirim */
-#notification-panel{margin-top:30px;}
-#notification-panel input{width:60%; padding:10px; border-radius:5px; border:none; background:#222; color:white;}
-#notification-panel button{padding:10px 15px; margin-left:10px; border:none; border-radius:5px;
-                           background:#00f0ff; color:#111; transition:0.3s;}
-#notification-panel button:hover{background:#ff00ff; color:white;}
-
-/* Admin Paneli */
-#admin-panel{display:none; margin-top:30px; padding:20px; background:#111; border-radius:10px;}
-#admin-panel input{width:60%; padding:8px; margin:5px 0; border-radius:5px; border:none; background:#222; color:white;}
-#admin-panel button{padding:8px 12px; margin-left:5px; border:none; border-radius:5px; background:#00f0ff; color:#111; transition:0.3s;}
-#admin-panel button:hover{background:#ff00ff; color:white;}
-#admin-panel h2, #admin-panel h3{color:#00f0ff;}
+#notification-panel{
+    margin-top:50px;
+    text-align:center;
+}
+#notification-panel input{
+    width:60%;
+    padding:10px;
+    border-radius:10px;
+    border:none;
+    background:#222;
+    color:white;
+    margin-right:10px;
+}
+#notification-panel button{
+    padding:10px 15px;
+    border:none;
+    border-radius:10px;
+    background:#ff00ff;
+    color:white;
+}
+#notification-panel button:hover{
+    background:#00ffff;
+    color:#111;
+}
 </style>
 </head>
 <body>
 
 <!-- Giriş/Kayıt Ekranı -->
 <div id="login">
-    <h2>OYUN SİTESİ</h2>
+    <h2>RadeuxCraft</h2>
     <input type="text" id="username" placeholder="Kullanıcı Adı">
     <input type="password" id="password" placeholder="Şifre">
     <button onclick="login()">Giriş Yap</button>
@@ -67,48 +200,47 @@ header button:hover{background:#00f0ff; color:#111;}
     <header>
         <div>Hoşgeldin, <span id="display-name"></span></div>
         <div>
-            <button onclick="showBalance()">Bakiye</button>
             <button onclick="logout()">Çıkış Yap</button>
-            <button onclick="copyText()">Kopyala</button>
         </div>
     </header>
 
-    <h2 style="margin-top:30px;">Market</h2>
-    <div id="market"></div>
+    <!-- IP Kopyala -->
+    <div id="ip-section">
+        <h2>Sunucu IP'si</h2>
+        <button onclick="copyIP()">Kopyala: radeuxcraft.mcsh.io</button>
+    </div>
 
+    <!-- Market Örnek Kartlar -->
+    <div id="market">
+        <div class="card">
+            <h3>Kılıç</h3>
+            <p>Fiyat: 50</p>
+            <button>Satın Al</button>
+        </div>
+        <div class="card">
+            <h3>Kalkan</h3>
+            <p>Fiyat: 30</p>
+            <button>Satın Al</button>
+        </div>
+        <div class="card">
+            <h3>Zırh</h3>
+            <p>Fiyat: 60</p>
+            <button>Satın Al</button>
+        </div>
+    </div>
+
+    <!-- Bildirim -->
     <div id="notification-panel">
         <h2>Bildirim Bırak</h2>
         <input type="text" id="notification" placeholder="Bildirim yazın">
         <button onclick="leaveNotification()">Gönder</button>
     </div>
-
-    <!-- Admin Paneli -->
-    <div id="admin-panel">
-        <h2>Admin Paneli</h2>
-
-        <h3>Bakiye Yükle</h3>
-        <input type="text" id="admin-player" placeholder="Oyuncu Adı">
-        <input type="number" id="admin-amount" placeholder="Yüklenecek Bakiye">
-        <button onclick="adminLoadBalance()">Yükle</button>
-
-        <h3>Market Ürün Ekle</h3>
-        <input type="text" id="admin-item-name" placeholder="Ürün Adı">
-        <input type="number" id="admin-item-price" placeholder="Fiyat">
-        <button onclick="adminAddProduct()">Ekle</button>
-    </div>
 </div>
 
 <script>
-// Demo Veri
-let users = [];
-let products = [
-    {name:"Kılıç", price:50},
-    {name:"Kalkan", price:30},
-    {name:"Can Yenileme", price:20},
-    {name:"Büyü Kitabı", price:80},
-    {name:"Zırh", price:60}
-];
-let currentUser = null;
+// Demo kullanıcı veri
+let users=[];
+let currentUser=null;
 
 // Kayıt İşlemi
 function register(){
@@ -119,7 +251,7 @@ function register(){
         document.getElementById("login-msg").innerText="Bu kullanıcı zaten var.";
         return;
     }
-    users.push({username:u,password:p,balance:100,notifications:[]});
+    users.push({username:u,password:p});
     loginUser(u);
 }
 
@@ -132,98 +264,34 @@ function login(){
     else{ document.getElementById("login-msg").innerText="Hesap bulunamadı."; }
 }
 
-// Kullanıcıyı Ana Sayfaya Yönlendir
+// Giriş sonrası
 function loginUser(username){
     currentUser=users.find(x=>x.username===username);
     document.getElementById("display-name").innerText=currentUser.username;
     document.getElementById("login").style.display="none";
     document.getElementById("main").style.display="block";
-    showMarket();
-
-    // Admin kontrolü - sadece senin kullanıcı adın
-    if(currentUser.username.toLowerCase() === "eldryasadmin"){
-        document.getElementById("admin-panel").style.display="block";
-    } else {
-        document.getElementById("admin-panel").style.display="none";
-    }
 }
 
-// Çıkış Yap
+// Çıkış
 function logout(){
     currentUser=null;
     document.getElementById("login").style.display="block";
     document.getElementById("main").style.display="none";
 }
 
-// Bakiye Göster
-function showBalance(){ alert("Mevcut bakiye: "+currentUser.balance); }
-
-// Kopyalama Tuşu
-function copyText(){
-    navigator.clipboard.writeText("eldryasmp.aternos.me");
-    alert("Kopyalandı!");
+// IP Kopyala
+function copyIP(){
+    navigator.clipboard.writeText("radeuxcraft.mcsh.io");
+    alert("IP kopyalandı!");
 }
 
-// Market Gösterimi
-function showMarket(){
-    let marketDiv=document.getElementById("market");
-    marketDiv.innerHTML="";
-    products.forEach((p,i)=>{
-        let div=document.createElement("div");
-        div.className="product";
-        div.innerHTML=`<h3>${p.name}</h3><p>Bakiye: ${p.price}</p>
-                       <button onclick="buyProduct(${i})">Satın Al</button>`;
-        marketDiv.appendChild(div);
-    });
-}
-
-// Ürün Satın Alma
-function buyProduct(index){
-    let p=products[index];
-    if(currentUser.balance>=p.price){
-        currentUser.balance-=p.price;
-        alert(p.name+" satın alındı!");
-    } else { alert("Yeterli bakiye yok!"); }
-}
-
-// Bildirim Gönderme
+// Bildirim
 function leaveNotification(){
     let text=document.getElementById("notification").value.trim();
     if(text){
-        currentUser.notifications.push(text);
+        alert("Bildirim gönderildi: "+text);
         document.getElementById("notification").value="";
-        alert("Bildirim gönderildi!");
     }
-}
-
-// Admin: bakiye yükleme
-function adminLoadBalance(){
-    let playerName = document.getElementById("admin-player").value.trim();
-    let amount = parseInt(document.getElementById("admin-amount").value);
-    let player = users.find(u => u.username === playerName);
-    if(player && amount>0){
-        player.balance += amount;
-        alert(playerName + " kullanıcısına " + amount + " bakiye yüklendi!");
-    } else {
-        alert("Kullanıcı bulunamadı veya geçersiz bakiye!");
-    }
-    document.getElementById("admin-player").value="";
-    document.getElementById("admin-amount").value="";
-}
-
-// Admin: ürün ekleme
-function adminAddProduct(){
-    let name = document.getElementById("admin-item-name").value.trim();
-    let price = parseInt(document.getElementById("admin-item-price").value);
-    if(name && price>0){
-        products.push({name:name, price:price});
-        showMarket();
-        alert(name + " ürünü markete eklendi!");
-    } else {
-        alert("Geçersiz ürün veya fiyat!");
-    }
-    document.getElementById("admin-item-name").value="";
-    document.getElementById("admin-item-price").value="";
 }
 </script>
 
