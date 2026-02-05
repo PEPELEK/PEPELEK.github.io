@@ -1,133 +1,137 @@
-<?php
-// db.php - veritabanı bağlantısı
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "oyunsitesi";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) { die("Connection failed: " . $conn->connect_error); }
-session_start();
-?>
-
-<?php
-// index.php - giriş yapmış kullanıcıları görebileceğin ana sayfa
-include 'db.php';
-
-// Kullanıcı çıkış yaparsa session temizle
-if(isset($_GET['logout'])){
-    session_destroy();
-    header("Location: login.php");
-    exit();
-}
-
-// Kullanıcı giriş yapmışsa bilgileri al
-if(isset($_SESSION['user_id'])){
-    $userid = $_SESSION['user_id'];
-    $sql = "SELECT username, balance FROM users WHERE id='$userid'";
-    $result = $conn->query($sql);
-    $user = $result->fetch_assoc();
-}
-?>
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Oyun Sitesi</title>
+<title>Oyun Sitesi Demo</title>
 <style>
-body{ font-family: Arial; background:#f4f4f4; margin:0; padding:0;}
-header{ background:#222; color:white; padding:10px; display:flex; justify-content:space-between;}
-button{padding:5px 10px; margin-left:5px; cursor:pointer;}
-#market, #admin-panel{margin:20px; padding:20px; background:white; border-radius:5px;}
-input{padding:5px; margin:5px 0;}
+body { font-family: Arial; background:#f4f4f4; margin:0; padding:0;}
+header { background:#222; color:white; padding:10px; display:flex; justify-content:space-between; align-items:center;}
+button {padding:5px 10px; margin-left:5px; cursor:pointer;}
+#login, #main { max-width:600px; margin:50px auto; background:white; padding:20px; border-radius:5px;}
+input {padding:5px; margin:5px 0; width:100%;}
+h2 {margin-top:0;}
+.product {margin:10px 0; padding:10px; border:1px solid #ccc; border-radius:5px;}
 </style>
 </head>
 <body>
 
-<header>
-    <div>
-        <?php if(isset($user)): ?>
-            Hoşgeldin, <strong><?php echo htmlspecialchars($user['username']); ?></strong>
-        <?php else: ?>
-            Ziyaretçi
-        <?php endif; ?>
-    </div>
-    <div>
-        <?php if(isset($user)): ?>
-            <button onclick="alert('Mevcut bakiye: <?php echo $user['balance']; ?>')">Bakiye</button>
-            <button onclick="window.location='?logout=true'">Çıkış Yap</button>
-        <?php else: ?>
-            <a href="login.php"><button>Giriş Yap</button></a>
-            <a href="register.php"><button>Kayıt Ol</button></a>
-        <?php endif; ?>
-        <button onclick="copyText()">Kopyala</button>
-    </div>
-</header>
+<div id="login">
+    <h2>Giriş Yap / Kayıt Ol</h2>
+    <input type="text" id="username" placeholder="Kullanıcı Adı"><br>
+    <input type="password" id="password" placeholder="Şifre"><br>
+    <button onclick="login()">Giriş Yap</button>
+    <button onclick="register()">Kayıt Ol</button>
+    <p id="login-msg" style="color:red;"></p>
+</div>
 
-<div id="market">
+<div id="main" style="display:none;">
+    <header>
+        <div>
+            Hoşgeldin, <span id="display-name"></span>
+        </div>
+        <div>
+            <button onclick="showBalance()">Bakiye</button>
+            <button onclick="logout()">Çıkış Yap</button>
+            <button onclick="copyText()">Kopyala</button>
+        </div>
+    </header>
+
     <h2>Market</h2>
-    <?php
-    $products = $conn->query("SELECT * FROM products");
-    while($p = $products->fetch_assoc()){
-        echo "<div>";
-        echo "Ürün: ".htmlspecialchars($p['name'])." - Bakiye: ".$p['price'];
-        echo " <button onclick=\"buyProduct(".$p['id'].")\">Satın Al</button>";
-        echo "</div>";
-    }
-    ?>
-</div>
+    <div id="market"></div>
 
-<?php if(isset($user) && $user['username']=="admin"): ?>
-<div id="admin-panel">
-    <h2>Admin Paneli</h2>
-    <h3>Bakiye Yükle</h3>
-    <form method="post">
-        Kullanıcı Adı: <input type="text" name="player"><br>
-        Yüklenecek Bakiye: <input type="number" name="amount"><br>
-        <button type="submit" name="load_balance">Yükle</button>
-    </form>
-
-    <h3>Market Ürün Ekle</h3>
-    <form method="post">
-        Ürün Adı: <input type="text" name="item_name"><br>
-        Fiyat: <input type="number" name="item_price"><br>
-        <button type="submit" name="add_product">Ekle</button>
-    </form>
+    <h2>Bildirim Bırak</h2>
+    <input type="text" id="notification" placeholder="Bildirim yazın">
+    <button onclick="leaveNotification()">Gönder</button>
 </div>
-<?php endif; ?>
 
 <script>
+// Demo veri
+let users = [];
+let products = [
+    {name:"Kılıç", price:50},
+    {name:"Kalkan", price:30},
+    {name:"Can Yenileme", price:20}
+];
+let currentUser = null;
+
+function register() {
+    let u = document.getElementById("username").value.trim();
+    let p = document.getElementById("password").value.trim();
+    if(!u || !p){ alert("Kullanıcı adı ve şifre gerekli."); return; }
+
+    if(users.find(x=>x.username===u)){ 
+        document.getElementById("login-msg").innerText="Bu kullanıcı zaten var.";
+        return;
+    }
+
+    users.push({username:u,password:p,balance:100,notifications:[]});
+    loginUser(u);
+}
+
+function login() {
+    let u = document.getElementById("username").value.trim();
+    let p = document.getElementById("password").value.trim();
+    let user = users.find(x=>x.username===u && x.password===p);
+    if(user){
+        loginUser(u);
+    } else {
+        document.getElementById("login-msg").innerText="Hesap bulunamadı.";
+    }
+}
+
+function loginUser(username){
+    currentUser = users.find(x=>x.username===username);
+    document.getElementById("display-name").innerText = currentUser.username;
+    document.getElementById("login").style.display="none";
+    document.getElementById("main").style.display="block";
+    showMarket();
+}
+
+function logout(){
+    currentUser = null;
+    document.getElementById("login").style.display="block";
+    document.getElementById("main").style.display="none";
+}
+
+function showBalance(){
+    alert("Mevcut bakiye: "+currentUser.balance);
+}
+
 function copyText(){
     navigator.clipboard.writeText("eldryasmp.aternos.me");
     alert("Kopyalandı!");
 }
 
-function buyProduct(id){
-    fetch('buy.php?id='+id)
-    .then(res=>res.text())
-    .then(alert)
-    .then(()=>location.reload());
+function showMarket(){
+    let marketDiv = document.getElementById("market");
+    marketDiv.innerHTML = "";
+    products.forEach((p,i)=>{
+        let div = document.createElement("div");
+        div.className="product";
+        div.innerHTML = `Ürün: ${p.name} - Bakiye: ${p.price} <button onclick="buyProduct(${i})">Satın Al</button>`;
+        marketDiv.appendChild(div);
+    });
+}
+
+function buyProduct(index){
+    let p = products[index];
+    if(currentUser.balance>=p.price){
+        currentUser.balance -= p.price;
+        alert(p.name+" satın alındı!");
+    } else {
+        alert("Yeterli bakiye yok!");
+    }
+}
+
+function leaveNotification(){
+    let text = document.getElementById("notification").value.trim();
+    if(text){
+        currentUser.notifications.push(text);
+        document.getElementById("notification").value="";
+        alert("Bildirim gönderildi!");
+    }
 }
 </script>
 
 </body>
 </html>
-
-<?php
-// Admin işlemleri
-if(isset($_POST['load_balance'])){
-    $player = $_POST['player'];
-    $amount = (int)$_POST['amount'];
-    $conn->query("UPDATE users SET balance=balance+$amount WHERE username='$player'");
-    echo "<script>alert('Bakiye yüklendi!');</script>";
-}
-
-if(isset($_POST['add_product'])){
-    $name = $_POST['item_name'];
-    $price = (int)$_POST['item_price'];
-    $conn->query("INSERT INTO products(name,price) VALUES('$name',$price)");
-    echo "<script>alert('Ürün eklendi!');</script>";
-}
-?>
-
