@@ -2,175 +2,214 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>NacoBoxPvP</title>
+<title>Eldrya SMP</title>
 <style>
+* { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0f0f0f;
+    height: 100vh;
+    background: url("https://images.unsplash.com/photo-1511203466129-824e631920d4") no-repeat center/cover;
     color: white;
 }
 
-.hidden { display: none; }
-
-.center {
-    height: 100vh;
+/* Karartma */
+.overlay {
+    background: rgba(0,0,0,0.65);
+    height: 100%;
+    width: 100%;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 }
 
-.box {
-    background: #1a1a1a;
+/* Kart */
+.card {
+    background: rgba(20,20,20,0.9);
     padding: 30px;
-    border-radius: 10px;
-    width: 300px;
+    border-radius: 15px;
+    width: 360px;
+    display: none;
+    box-shadow: 0 0 30px black;
+}
+
+.card h2 {
     text-align: center;
+    margin-bottom: 20px;
+}
+
+input, button {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: none;
 }
 
 input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    border: none;
+    background: #222;
+    color: white;
 }
 
 button {
-    width: 100%;
-    padding: 10px;
-    background: #00ffcc;
-    border: none;
-    border-radius: 5px;
+    background: orange;
+    color: black;
     font-weight: bold;
     cursor: pointer;
 }
 
 button:hover {
-    background: #00ccaa;
+    background: darkorange;
 }
 
-header {
-    background: #1c1c1c;
-    padding: 15px;
+.link {
     text-align: center;
+    margin-top: 10px;
+    cursor: pointer;
+    color: orange;
 }
 
-nav a {
-    color: #00ffcc;
-    margin: 0 10px;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-section {
-    padding: 40px;
+/* Dashboard */
+.dashboard {
+    display: none;
+    width: 90%;
     max-width: 900px;
-    margin: auto;
 }
 
-footer {
-    text-align: center;
+.top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.box {
+    background: rgba(30,30,30,0.9);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.market {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap: 15px;
+}
+
+.item {
+    background: #222;
     padding: 15px;
-    background: #1c1c1c;
+    border-radius: 12px;
+    text-align: center;
 }
 </style>
 </head>
 <body>
 
-<!-- GİRİŞ / KAYIT -->
-<div id="loginScreen" class="center">
-    <div class="box">
-        <h2>🔐 Giriş / Kayıt</h2>
-        <input type="text" id="username" placeholder="Kullanıcı Adı">
-        <input type="password" id="password" placeholder="Şifre">
-        <button onclick="register()">Kayıt Ol</button>
-        <br><br>
-        <button onclick="login()">Giriş Yap</button>
-        <p id="message"></p>
+<div class="overlay">
+
+    <!-- GİRİŞ -->
+    <div class="card" id="login">
+        <h2>Giriş Yap</h2>
+        <input type="text" placeholder="Kullanıcı Adı">
+        <input type="password" placeholder="Şifre">
+        <button onclick="goDashboard()">Giriş Yap</button>
+        <div class="link" onclick="showRegister()">Hesabın yok mu? Kayıt Ol</div>
     </div>
-</div>
 
-<!-- ANA SİTE -->
-<div id="mainSite" class="hidden">
+    <!-- KAYIT -->
+    <div class="card" id="register">
+        <h2>Kayıt Ol</h2>
+        <input type="text" placeholder="Kullanıcı Adı">
+        <input type="email" placeholder="E-posta">
+        <input type="password" placeholder="Şifre">
+        <button onclick="goDashboard()">Kayıt Ol</button>
+        <div class="link" onclick="showLogin()">Zaten hesabın var mı?</div>
+    </div>
 
-<header>
-    <h1>NacoBoxPvP</h1>
-    <nav>
-        <a href="#tanitim">Tanıtım</a>
-        <a href="#market">Market</a>
-        <a href="#duyuru">Duyurular</a>
-        <a href="#kurallar">Kurallar</a>
-    </nav>
-</header>
+    <!-- DASHBOARD -->
+    <div class="dashboard" id="dashboard">
+        <div class="top">
+            <h2>🐅 Eldrya SMP Panel</h2>
+            <div>Bakiye: <b id="balance">100</b>₺</div>
+        </div>
 
-<section id="tanitim">
-    <h2>🎮 Sunucu Tanıtımı</h2>
-    <p>IP: <b>NacoBoxpvp.aternos.me</b></p>
-    <button onclick="kopyala()">IP'yi Kopyala</button>
-</section>
+        <div class="box">
+            <h3>Sunucu Adresi</h3>
+            <button onclick="copyIP()">eldryasmp.aternos.me</button>
+            <p id="copyText"></p>
+        </div>
 
-<section id="market">
-    <h2>🛒 Market</h2>
-    <ul>
-        <li>VIP – 50₺</li>
-        <li>Rank – 100₺</li>
-        <li>1000 Coin – 25₺</li>
-    </ul>
-</section>
+        <div class="box">
+            <h3>Market</h3>
+            <div class="market">
+                <div class="item">
+                    <h4>VIP</h4>
+                    <p>50₺</p>
+                    <button onclick="buy(50)">Satın Al</button>
+                </div>
+                <div class="item">
+                    <h4>VIP+</h4>
+                    <p>80₺</p>
+                    <button onclick="buy(80)">Satın Al</button>
+                </div>
+                <div class="item">
+                    <h4>MVP</h4>
+                    <p>120₺</p>
+                    <button onclick="buy(120)">Satın Al</button>
+                </div>
+            </div>
+        </div>
 
-<section id="duyuru">
-    <h2>📢 Duyurular</h2>
-    <p>Sunucu yeni açıldı!</p>
-</section>
-
-<section id="kurallar">
-    <h2>📜 Kurallar</h2>
-    <ul>
-        <li>Hile yasak</li>
-        <li>Küfür yasak</li>
-        <li>Saygı zorunlu</li>
-    </ul>
-</section>
-
-<footer>
-    © 2026 NacoBoxPvP
-</footer>
+        <div class="box">
+            <h3>Bakiye Yükle</h3>
+            <button onclick="addBalance(50)">+50₺</button>
+            <button onclick="addBalance(100)">+100₺</button>
+        </div>
+    </div>
 
 </div>
 
 <script>
-function register() {
-    let user = username.value;
-    let pass = password.value;
+let balance = 100;
 
-    if (!user || !pass) {
-        message.innerText = "Boş bırakma!";
-        return;
-    }
-
-    localStorage.setItem(user, pass);
-    message.innerText = "Kayıt başarılı!";
+function showRegister(){
+    login.style.display = "none";
+    register.style.display = "block";
 }
 
-function login() {
-    let user = username.value;
-    let pass = password.value;
+function showLogin(){
+    register.style.display = "none";
+    login.style.display = "block";
+}
 
-    if (localStorage.getItem(user) === pass) {
-        loginScreen.classList.add("hidden");
-        mainSite.classList.remove("hidden");
+function goDashboard(){
+    login.style.display = "none";
+    register.style.display = "none";
+    dashboard.style.display = "block";
+}
+
+function copyIP(){
+    navigator.clipboard.writeText("eldryasmp.aternos.me");
+    copyText.innerText = "✔ IP kopyalandı!";
+}
+
+function buy(price){
+    if(balance >= price){
+        balance -= price;
+        document.getElementById("balance").innerText = balance;
+        alert("Satın alma başarılı!");
     } else {
-        message.innerText = "Hatalı giriş!";
+        alert("Yetersiz bakiye!");
     }
 }
 
-function kopyala() {
-    navigator.clipboard.writeText("NacoBoxpvp.aternos.me");
-    alert("IP kopyalandı!");
+function addBalance(amount){
+    balance += amount;
+    document.getElementById("balance").innerText = balance;
 }
+
+login.style.display = "block";
 </script>
 
 </body>
 </html>
-
