@@ -1,146 +1,181 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RuenNetwork | Giriş Yap</title>
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <!-- CSS -->
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0; padding: 0;
-            font-family: 'Roboto', sans-serif;
-        }
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #1e1e2f, #3b3b5a);
-            color: #fff;
-        }
-        .container {
-            background: rgba(0,0,0,0.85);
-            padding: 40px 50px;
-            border-radius: 15px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 0 40px rgba(0,0,0,0.7);
-            text-align: center;
-        }
-        h1 {
-            margin-bottom: 30px;
-            font-size: 28px;
-            color: #00cfff;
-        }
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 12px 15px;
-            margin: 10px 0 20px 0;
-            border-radius: 8px;
-            border: none;
-            outline: none;
-            font-size: 16px;
-        }
-        input[type="submit"] {
-            background: #00cfff;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            width: 100%;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            color: #1e1e2f;
-        }
-        input[type="submit"]:hover {
-            background: #0099cc;
-        }
-        .error, .success {
-            margin-bottom: 15px;
-            padding: 10px;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .error {
-            background: #ff4d4d;
-            color: white;
-        }
-        .success {
-            background: #4dff88;
-            color: #000;
-        }
-        .register {
-            margin-top: 15px;
-            font-size: 14px;
-        }
-        .register a {
-            color: #00cfff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .register a:hover {
-            text-decoration: underline;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RuenNetwork | BoxPvP Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Roboto',sans-serif;}
+body{background:linear-gradient(135deg,#1e1e2f,#3b3b5a);color:#fff;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding-top:40px;}
+.container{background:rgba(0,0,0,0.95);padding:50px 60px;border-radius:20px;width:100%;max-width:700px;box-shadow:0 0 80px rgba(0,0,0,0.7);}
+h1,h2{color:#00cfff;text-shadow:0 0 10px rgba(0,255,255,0.6);}
+h1{font-size:36px;margin-bottom:30px;text-align:center;}
+h2{margin-top:30px;margin-bottom:15px;}
+input[type=text],input[type=password]{width:100%;padding:18px 20px;margin:15px 0 25px 0;border-radius:12px;border:none;font-size:18px;background:rgba(255,255,255,0.05);color:#fff;transition:all 0.3s;}
+input::placeholder{color:#aaa;}
+input:focus{background:rgba(0,255,255,0.1);box-shadow:0 0 10px #00cfff;outline:none;}
+input[type=submit]{background:#00cfff;border:none;padding:18px;border-radius:12px;width:100%;cursor:pointer;font-weight:bold;font-size:18px;color:#1e1e2f;transition:all 0.3s;}
+input[type=submit]:hover{background:#0099cc;transform:scale(1.03);}
+.error,.success{margin-bottom:20px;padding:15px;border-radius:10px;font-weight:bold;font-size:16px;}
+.error{background:#ff4d4d;color:white;}
+.success{background:#4dff88;color:#000;}
+a{color:#00cfff;text-decoration:none;}
+a:hover{text-decoration:underline;}
+#dashboard,#registerPage,#announcementEdit{display:none;}
+#dashboard p,#rules p,#announcementEdit textarea{font-size:16px;margin-bottom:10px;}
+textarea{width:100%;padding:15px;border-radius:12px;border:none;background:rgba(255,255,255,0.05);color:#fff;resize:none;font-size:16px;outline:none;}
+button{padding:10px 15px;border-radius:8px;border:none;font-weight:bold;cursor:pointer;}
+#copyIP{cursor:pointer;color:#00cfff;font-weight:bold;text-decoration:underline;}
+#copyIP:hover{color:#4dff88;}
+#logoutBtn{background:#ff4d4d;color:#fff;}
+#saveAnnouncement,#editAnnouncementBtn{background:#00cfff;color:#1e1e2f;margin-top:10px;}
+.register-link{margin-top:10px;text-align:center;font-size:16px;}
+.register-link a{font-weight:bold;}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>RuenNetwork Giriş</h1>
+<div class="container">
+    <h1>RuenNetwork | BoxPvP Portal</h1>
 
-        <!-- Hata veya Başarı Mesajları -->
-        <div id="message"></div>
+    <!-- Mesaj alanı -->
+    <div id="message"></div>
 
-        <!-- Giriş Formu -->
-        <form id="loginForm">
-            <input type="text" id="username" placeholder="Kullanıcı Adı" required>
-            <input type="password" id="password" placeholder="Şifre" required>
-            <input type="submit" value="Giriş Yap">
+    <!-- Giriş Formu -->
+    <form id="loginForm">
+        <input type="text" id="loginUsername" placeholder="Kullanıcı Adı" maxlength="50" required>
+        <input type="password" id="loginPassword" placeholder="Şifre" maxlength="50" required>
+        <input type="submit" value="Giriş Yap">
+    </form>
+
+    <div class="register-link">
+        Hesabın yok mu? <a href="#" id="goRegister">Kayıt Ol</a>
+    </div>
+
+    <!-- Kayıt Sayfası -->
+    <div id="registerPage">
+        <h2>Kayıt Ol</h2>
+        <form id="registerForm">
+            <input type="text" id="regUsername" placeholder="Kullanıcı Adı" maxlength="50" required>
+            <input type="password" id="regPassword" placeholder="Şifre" maxlength="50" required>
+            <input type="submit" value="Kayıt Ol">
         </form>
-
-        <div class="register">
-            Hesabın yok mu? <a href="register.html">Kayıt Ol</a>
+        <div class="register-link">
+            Zaten hesabın var mı? <a href="#" id="backToLogin">Giriş Yap</a>
         </div>
     </div>
 
-    <!-- JS -->
-    <script>
-        const form = document.getElementById('loginForm');
-        const messageDiv = document.getElementById('message');
+    <!-- Dashboard -->
+    <div id="dashboard">
+        <h2>Hoşgeldin, <span id="userDisplay"></span>!</h2>
+        <p>Sunucu IP: <span id="serverIP">RuenNetwork.falixsrv.me</span> <span id="copyIP">[Kopyala]</span></p>
+        <p>Sunucu Modları: BoxPvP 1v1 | 2v2 | 3v3</p>
+        <p id="rules"><strong>Kurallar:</strong><br>
+            1. Hakaret yasaktır.<br>
+            2. Hile kullanmak yasaktır.<br>
+            3. Takım arkadaşına saygı göster.<br>
+        </p>
+        <p id="announcement"><strong>Duyuru:</strong> Yeni etkinlikler yakında!</p>
+        <button id="editAnnouncementBtn">Duyuru Düzenle (Sadece Sen)</button>
+        <div id="announcementEdit">
+            <textarea id="announcementText" rows="4"></textarea>
+            <button id="saveAnnouncement">Kaydet</button>
+        </div>
+        <p><button id="logoutBtn">Çıkış Yap</button></p>
+    </div>
+</div>
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+<script>
+// Kullanıcı simülasyonu
+let users = {}; // username: password
 
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
+// Login sayfasına dön
+document.getElementById('backToLogin').addEventListener('click',(e)=>{
+    e.preventDefault();
+    document.getElementById('registerPage').style.display='none';
+    document.getElementById('loginForm').style.display='block';
+    document.querySelector('.register-link').style.display='block';
+    document.getElementById('message').innerHTML='';
+});
 
-            messageDiv.innerHTML = '';
-            
-            if(!username || !password){
-                messageDiv.innerHTML = '<div class="error">Lütfen tüm alanları doldurun!</div>';
-                return;
-            }
+// Kayıt sayfasına git
+document.getElementById('goRegister').addEventListener('click',(e)=>{
+    e.preventDefault();
+    document.getElementById('loginForm').style.display='none';
+    document.querySelector('.register-link').style.display='none';
+    document.getElementById('registerPage').style.display='block';
+});
 
-            // Fake API çağrısı örneği (backend'e bağlayabilirsin)
-            // Örnek: fetch('/api/login', {method: 'POST', body: JSON.stringify({username, password})})
-            // Backend login işlemi yapacak.
+// Kayıt işlemi
+document.getElementById('registerForm').addEventListener('submit',(e)=>{
+    e.preventDefault();
+    let username=document.getElementById('regUsername').value.trim();
+    let password=document.getElementById('regPassword').value.trim();
+    if(username in users){
+        alert('Bu kullanıcı adı zaten var!');
+        return;
+    }
+    users[username]=password;
+    alert('Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz.');
+    document.getElementById('registerPage').style.display='none';
+    document.getElementById('loginForm').style.display='block';
+    document.querySelector('.register-link').style.display='block';
+});
 
-            // Örnek senaryo
-            if(username === "admin" && password === "12345"){
-                messageDiv.innerHTML = '<div class="success">Giriş başarılı! Yönlendiriliyorsunuz...</div>';
-                setTimeout(() => {
-                    window.location.href = "dashboard.html";
-                }, 1500);
-            } else {
-                messageDiv.innerHTML = '<div class="error">Hesap bulunamadı veya şifre yanlış!</div>';
-            }
-        });
-    </script>
+// Login işlemi
+document.getElementById('loginForm').addEventListener('submit',(e)=>{
+    e.preventDefault();
+    let username=document.getElementById('loginUsername').value.trim();
+    let password=document.getElementById('loginPassword').value.trim();
+    if(!(username in users)){
+        document.getElementById('message').innerHTML='<div class="error">Hesap bulunamadı!</div>';
+        return;
+    }
+    if(users[username]!==password){
+        document.getElementById('message').innerHTML='<div class="error">Şifre yanlış!</div>';
+        return;
+    }
+    // Başarılı giriş
+    document.getElementById('loginForm').style.display='none';
+    document.querySelector('.register-link').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    document.getElementById('userDisplay').textContent=username;
+    document.getElementById('message').innerHTML='<div class="success">Giriş başarılı!</div>';
+});
+
+// IP kopyalama
+document.getElementById('copyIP').addEventListener('click',()=>{
+    navigator.clipboard.writeText(document.getElementById('serverIP').textContent).then(()=>{
+        alert('IP kopyalandı: '+document.getElementById('serverIP').textContent);
+    });
+});
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click',()=>{
+    document.getElementById('dashboard').style.display='none';
+    document.getElementById('loginForm').style.display='block';
+    document.querySelector('.register-link').style.display='block';
+    document.getElementById('message').innerHTML='';
+    document.getElementById('loginUsername').value='';
+    document.getElementById('loginPassword').value='';
+});
+
+// Duyuru düzenleme (sadece admin simülasyonu)
+document.getElementById('editAnnouncementBtn').addEventListener('click',()=>{
+    document.getElementById('announcementEdit').style.display='block';
+    document.getElementById('announcementText').value=document.getElementById('announcement').innerText.replace('Duyuru: ','');
+});
+document.getElementById('saveAnnouncement').addEventListener('click',()=>{
+    let newText=document.getElementById('announcementText').value.trim();
+    if(newText===''){alert('Duyuru boş olamaz!');return;}
+    document.getElementById('announcement').innerHTML='<strong>Duyuru:</strong> '+newText;
+    document.getElementById('announcementEdit').style.display='none';
+    alert('Duyuru güncellendi!');
+});
+</script>
 </body>
 </html>
+
 
 }
 </script>
