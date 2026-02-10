@@ -1,172 +1,227 @@
-<?php
-session_start();
-
-/* DATABASE */
-$conn = new mysqli("localhost","DB_KULLANICI","DB_SIFRE","DB_ADI");
-if($conn->connect_error) die("DB Hatası");
-
-/* REGISTER */
-if(isset($_POST["register"])){
-  $u=$_POST["username"];
-  $e=$_POST["email"];
-  $p=password_hash($_POST["password"], PASSWORD_DEFAULT);
-  $q=$conn->prepare("INSERT INTO users (username,email,password) VALUES (?,?,?)");
-  $q->bind_param("sss",$u,$e,$p);
-  $msg=$q->execute()?"Kayıt başarılı!":"Kullanıcı zaten var!";
-}
-
-/* LOGIN */
-if(isset($_POST["login"])){
-  $u=$_POST["username"];
-  $p=$_POST["password"];
-  $q=$conn->prepare("SELECT * FROM users WHERE username=?");
-  $q->bind_param("s",$u);
-  $q->execute();
-  $r=$q->get_result();
-  if($r->num_rows){
-    $row=$r->fetch_assoc();
-    if(password_verify($p,$row["password"])){
-      $_SESSION["user"]=$row["username"];
-    } else $msg="Şifre yanlış!";
-  } else $msg="Kullanıcı bulunamadı!";
-}
-
-/* LOGOUT */
-if(isset($_GET["logout"])){
-  session_destroy();
-  header("Location: index.php");
-  exit;
-}
-?>
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>MercyCraft</title>
+<title>MercyCraft | BoxPvP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-*{margin:0;padding:0;font-family:Arial}
-body{background:#0c0c0c;color:#eee}
+/* ===== GENEL ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
 
-/* NAV */
-nav{
-  background:#111;
-  padding:18px 40px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center
+body {
+    background: #0f0f0f;
+    color: #eee;
 }
-.logo{color:#ff2d2d;font-size:24px;font-weight:bold}
-nav a{
-  color:#ccc;
-  margin-left:20px;
-  text-decoration:none;
-  font-weight:bold
-}
-nav a:hover{color:#ff2d2d}
 
-/* HERO */
-.hero{
-  height:85vh;
-  background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.9)),
-  url("https://i.imgur.com/9ZQZ4ZQ.jpeg") center/cover;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  text-align:center
+/* ===== HEADER ===== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: #141414;
 }
-.hero h1{font-size:64px;color:#ff2d2d}
-.hero p{font-size:22px;margin:15px 0}
-.ip{
-  background:#1b1b1b;
-  display:inline-block;
-  padding:15px 35px;
-  border-radius:10px;
-  cursor:pointer
-}
-.ip:hover{background:#ff2d2d;color:#fff}
 
-/* FORMS */
-form{
-  background:#151515;
-  width:320px;
-  padding:25px;
-  border-radius:12px;
-  margin:40px auto;
-  text-align:center
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #ff3c3c;
 }
-input,button{
-  width:90%;
-  padding:12px;
-  margin:10px 0;
-  border:none;
-  border-radius:6px
-}
-button{
-  background:#ff2d2d;
-  color:white;
-  cursor:pointer;
-  font-weight:bold
-}
-.msg{color:#ff2d2d;text-align:center;margin-top:20px}
 
-/* PANEL */
-.panel{
-  padding:60px;
-  text-align:center
+nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #ddd;
+    font-size: 15px;
+}
+
+nav a:hover {
+    color: #ff3c3c;
+}
+
+/* ===== HERO ===== */
+.hero {
+    text-align: center;
+    padding: 90px 20px;
+    background: linear-gradient(180deg, #1a1a1a, #0f0f0f);
+}
+
+.hero h1 {
+    font-size: 36px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    color: #bbb;
+    margin-bottom: 20px;
+}
+
+.ip-box {
+    font-size: 18px;
+    color: #ffcc00;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.online {
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+/* ===== SECTIONS ===== */
+section {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+section h2 {
+    margin-bottom: 15px;
+}
+
+/* ===== FEATURES ===== */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    max-width: 800px;
+    margin: 30px auto;
+}
+
+.card {
+    background: #1c1c1c;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+    display: inline-block;
+    margin: 10px;
+    padding: 12px 25px;
+    background: #ff3c3c;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+.btn:hover {
+    background: #ff5e5e;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    background: #141414;
+    text-align: center;
+    padding: 15px;
+    font-size: 14px;
+    color: #aaa;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 600px) {
+    nav {
+        display: none;
+    }
+    .hero h1 {
+        font-size: 26px;
+    }
 }
 </style>
 </head>
+
 <body>
 
-<nav>
-<div class="logo">MercyCraft</div>
-<div>
-<a href="index.php">Ana Sayfa</a>
-<?php if(isset($_SESSION["user"])): ?>
-<a href="?logout">Çıkış</a>
-<?php else: ?>
-<a href="#login">Giriş</a>
-<a href="#register">Kayıt</a>
-<?php endif; ?>
-</div>
-</nav>
+<header>
+    <div class="logo">MERCYCRAFT</div>
+    <nav>
+        <a href="#home">Ana Sayfa</a>
+        <a href="#mode">Oyun Modu</a>
+        <a href="#features">Özellikler</a>
+        <a href="#contact">İletişim</a>
+    </nav>
+</header>
 
-<div class="hero">
-  <div>
-    <h1>MercyCraft</h1>
-    <p>BoxPvP • Rekabet • Güç</p>
-    <div class="ip">IP: MercyCraft.falixsrv.me</div>
-  </div>
-</div>
+<section id="home" class="hero">
+    <h1>EN KALİTELİ BOXPVP DENEYİMİ</h1>
+    <p>Savaş, rekabet ve eğlence tek bir arenada</p>
 
-<?php if(isset($msg)) echo "<div class='msg'>$msg</div>"; ?>
+    <div class="ip-box" id="ipBox">
+        IP: <span id="ip">play.mercycraft.com</span>
+    </div>
 
-<?php if(isset($_SESSION["user"])): ?>
+    <div class="online">
+        Aktif Oyuncu: <span id="online">Yükleniyor...</span>
+    </div>
+</section>
 
-<div class="panel">
-<h2>Hoşgeldin <?=$_SESSION["user"]?></h2>
-<p>RushCraft tarzı kullanıcı paneli yakında.</p>
-</div>
+<section id="mode">
+    <h2>Oyun Modu</h2>
+    <p>
+        BoxPvP sisteminde sınırsız maden, özel kitler
+        ve rekabetçi PvP seni bekliyor.
+    </p>
+</section>
 
-<?php else: ?>
+<section id="features">
+    <h2>Neden MercyCraft?</h2>
+    <div class="cards">
+        <div class="card">⚡ Düşük Gecikme</div>
+        <div class="card">🛡 Güçlü Anti-Hile</div>
+        <div class="card">🎮 BoxPvP Odaklı</div>
+        <div class="card">👑 Aktif Yönetim</div>
+    </div>
+</section>
 
-<form method="POST" id="login">
-<h2>Giriş Yap</h2>
-<input name="username" placeholder="Kullanıcı Adı" required>
-<input type="password" name="password" placeholder="Şifre" required>
-<button name="login">Giriş</button>
-</form>
+<section id="contact">
+    <h2>Bağlantılar</h2>
+    <a class="btn" href="#">Discord</a>
+    <a class="btn" href="#">Market</a>
+</section>
 
-<form method="POST" id="register">
-<h2>Kayıt Ol</h2>
-<input name="username" placeholder="Kullanıcı Adı" required>
-<input type="email" name="email" placeholder="Email" required>
-<input type="password" name="password" placeholder="Şifre" required>
-<button name="register">Kayıt</button>
-</form>
+<footer>
+    © 2026 MercyCraft • Tüm Hakları Saklıdır
+</footer>
 
-<?php endif; ?>
+<script>
+/* ===== AYARLAR ===== */
+const SERVER_IP = "play.mercycraft.com";
+const API_URL = "https://api.mcsrvstat.us/2/" + SERVER_IP;
+
+/* IP KOPYALA */
+document.getElementById("ipBox").addEventListener("click", () => {
+    navigator.clipboard.writeText(SERVER_IP);
+    alert("IP kopyalandı: " + SERVER_IP);
+});
+
+/* AKTİF OYUNCU SAYISI */
+function loadOnline() {
+    fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+            if (data.online) {
+                document.getElementById("online").innerText =
+                    data.players.online + " oyuncu";
+            } else {
+                document.getElementById("online").innerText = "Kapalı";
+            }
+        })
+        .catch(() => {
+            document.getElementById("online").innerText = "Bilinmiyor";
+        });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadOnline();
+    setInterval(loadOnline, 30000);
+});
+</script>
 
 </body>
 </html>
-
