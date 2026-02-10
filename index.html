@@ -1,196 +1,172 @@
+<?php
+session_start();
+
+/* DATABASE */
+$conn = new mysqli("localhost","DB_KULLANICI","DB_SIFRE","DB_ADI");
+if($conn->connect_error) die("DB Hatası");
+
+/* REGISTER */
+if(isset($_POST["register"])){
+  $u=$_POST["username"];
+  $e=$_POST["email"];
+  $p=password_hash($_POST["password"], PASSWORD_DEFAULT);
+  $q=$conn->prepare("INSERT INTO users (username,email,password) VALUES (?,?,?)");
+  $q->bind_param("sss",$u,$e,$p);
+  $msg=$q->execute()?"Kayıt başarılı!":"Kullanıcı zaten var!";
+}
+
+/* LOGIN */
+if(isset($_POST["login"])){
+  $u=$_POST["username"];
+  $p=$_POST["password"];
+  $q=$conn->prepare("SELECT * FROM users WHERE username=?");
+  $q->bind_param("s",$u);
+  $q->execute();
+  $r=$q->get_result();
+  if($r->num_rows){
+    $row=$r->fetch_assoc();
+    if(password_verify($p,$row["password"])){
+      $_SESSION["user"]=$row["username"];
+    } else $msg="Şifre yanlış!";
+  } else $msg="Kullanıcı bulunamadı!";
+}
+
+/* LOGOUT */
+if(isset($_GET["logout"])){
+  session_destroy();
+  header("Location: index.php");
+  exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MercyCraft</title>
-
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
-}
+*{margin:0;padding:0;font-family:Arial}
+body{background:#0c0c0c;color:#eee}
 
-body {
-  background: #0f0f0f;
-  color: #eee;
+/* NAV */
+nav{
+  background:#111;
+  padding:18px 40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center
 }
-
-/* NAVBAR */
-nav {
-  background: #141414;
-  padding: 15px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.logo{color:#ff2d2d;font-size:24px;font-weight:bold}
+nav a{
+  color:#ccc;
+  margin-left:20px;
+  text-decoration:none;
+  font-weight:bold
 }
-
-nav .logo {
-  font-size: 22px;
-  font-weight: bold;
-  color: #ff3c3c;
-}
-
-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 25px;
-}
-
-nav ul li a {
-  color: #ccc;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-nav ul li a:hover {
-  color: #ff3c3c;
-}
+nav a:hover{color:#ff2d2d}
 
 /* HERO */
-.hero {
-  height: 85vh;
-  background: linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.9)),
-              url("https://i.imgur.com/9ZQZ4ZQ.jpeg") center/cover;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+.hero{
+  height:85vh;
+  background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.9)),
+  url("https://i.imgur.com/9ZQZ4ZQ.jpeg") center/cover;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center
 }
-
-.hero h1 {
-  font-size: 60px;
-  color: #ff3c3c;
+.hero h1{font-size:64px;color:#ff2d2d}
+.hero p{font-size:22px;margin:15px 0}
+.ip{
+  background:#1b1b1b;
+  display:inline-block;
+  padding:15px 35px;
+  border-radius:10px;
+  cursor:pointer
 }
+.ip:hover{background:#ff2d2d;color:#fff}
 
-.hero p {
-  margin-top: 15px;
-  font-size: 20px;
-  color: #ddd;
+/* FORMS */
+form{
+  background:#151515;
+  width:320px;
+  padding:25px;
+  border-radius:12px;
+  margin:40px auto;
+  text-align:center
 }
-
-.ip-box {
-  margin-top: 25px;
-  background: #1c1c1c;
-  display: inline-block;
-  padding: 15px 30px;
-  border-radius: 8px;
-  font-size: 18px;
-  cursor: pointer;
+input,button{
+  width:90%;
+  padding:12px;
+  margin:10px 0;
+  border:none;
+  border-radius:6px
 }
-
-.ip-box:hover {
-  background: #ff3c3c;
-  color: #fff;
+button{
+  background:#ff2d2d;
+  color:white;
+  cursor:pointer;
+  font-weight:bold
 }
+.msg{color:#ff2d2d;text-align:center;margin-top:20px}
 
-/* INFO */
-.info {
-  padding: 60px 20px;
-  text-align: center;
-}
-
-.info h2 {
-  font-size: 32px;
-  color: #ff3c3c;
-  margin-bottom: 20px;
-}
-
-.stats {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  flex-wrap: wrap;
-}
-
-.stat {
-  background: #1a1a1a;
-  padding: 25px;
-  border-radius: 10px;
-  width: 220px;
-}
-
-.stat h3 {
-  font-size: 28px;
-  color: #ff3c3c;
-}
-
-/* FOOTER */
-footer {
-  background: #141414;
-  padding: 20px;
-  text-align: center;
-  color: #777;
+/* PANEL */
+.panel{
+  padding:60px;
+  text-align:center
 }
 </style>
 </head>
-
 <body>
 
 <nav>
-  <div class="logo">MercyCraft</div>
-  <ul>
-    <li><a href="#">Ana Sayfa</a></li>
-    <li><a href="#">Mağaza</a></li>
-    <li><a href="#">Yardım</a></li>
-    <li><a href="#">Giriş</a></li>
-    <li><a href="#">Kayıt</a></li>
-  </ul>
+<div class="logo">MercyCraft</div>
+<div>
+<a href="index.php">Ana Sayfa</a>
+<?php if(isset($_SESSION["user"])): ?>
+<a href="?logout">Çıkış</a>
+<?php else: ?>
+<a href="#login">Giriş</a>
+<a href="#register">Kayıt</a>
+<?php endif; ?>
+</div>
 </nav>
 
-<section class="hero">
+<div class="hero">
   <div>
     <h1>MercyCraft</h1>
-    <p>BoxPvP • Eğlence • Rekabet</p>
-
-    <div class="ip-box" onclick="copyIP()">
-      IP: <b>MercyCraft.falixsrv.me</b>
-    </div>
+    <p>BoxPvP • Rekabet • Güç</p>
+    <div class="ip">IP: MercyCraft.falixsrv.me</div>
   </div>
-</section>
+</div>
 
-<section class="info">
-  <h2>Sunucu Durumu</h2>
-  <div class="stats">
-    <div class="stat">
-      <h3 id="players">--</h3>
-      <p>Online Oyuncu</p>
-    </div>
-    <div class="stat">
-      <h3>BoxPvP</h3>
-      <p>Oyun Modu</p>
-    </div>
-    <div class="stat">
-      <h3>7/24</h3>
-      <p>Aktif Sunucu</p>
-    </div>
-  </div>
-</section>
+<?php if(isset($msg)) echo "<div class='msg'>$msg</div>"; ?>
 
-<footer>
-  © 2026 MercyCraft • Tüm hakları saklıdır
-</footer>
+<?php if(isset($_SESSION["user"])): ?>
 
-<script>
-function copyIP() {
-  navigator.clipboard.writeText("MercyCraft.falixsrv.me");
-  alert("IP kopyalandı!");
-}
+<div class="panel">
+<h2>Hoşgeldin <?=$_SESSION["user"]?></h2>
+<p>RushCraft tarzı kullanıcı paneli yakında.</p>
+</div>
 
-fetch("https://api.mcsrvstat.us/2/MercyCraft.falixsrv.me")
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("players").innerText =
-      data.players && data.players.online !== undefined
-      ? data.players.online
-      : "0";
-  })
-  .catch(() => {
-    document.getElementById("players").innerText = "Offline";
-  });
-</script>
+<?php else: ?>
+
+<form method="POST" id="login">
+<h2>Giriş Yap</h2>
+<input name="username" placeholder="Kullanıcı Adı" required>
+<input type="password" name="password" placeholder="Şifre" required>
+<button name="login">Giriş</button>
+</form>
+
+<form method="POST" id="register">
+<h2>Kayıt Ol</h2>
+<input name="username" placeholder="Kullanıcı Adı" required>
+<input type="email" name="email" placeholder="Email" required>
+<input type="password" name="password" placeholder="Şifre" required>
+<button name="register">Kayıt</button>
+</form>
+
+<?php endif; ?>
 
 </body>
 </html>
+
